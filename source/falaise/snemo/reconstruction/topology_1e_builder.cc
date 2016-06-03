@@ -44,8 +44,6 @@ namespace snemo {
         meas["energy_" + e1_label].reset(ptr_energy);
         if (drivers.EMD) drivers.EMD->process(e1, *ptr_energy);
       }
-
-      return;
     }
 
   } // end of namespace reconstruction

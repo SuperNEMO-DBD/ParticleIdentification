@@ -32,12 +32,10 @@ namespace snemo {
     topology_2e_pattern::topology_2e_pattern()
       : base_topology_pattern()
     {
-      return;
     }
 
     topology_2e_pattern::~topology_2e_pattern()
     {
-      return;
     }
 
     bool topology_2e_pattern::has_electrons_energy() const

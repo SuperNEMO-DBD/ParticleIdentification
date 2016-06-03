@@ -30,13 +30,11 @@ namespace snemo {
     void angle_driver::_set_initialized(bool i_)
     {
       _initialized_ = i_;
-      return;
     }
 
     void angle_driver::set_logging_priority(const datatools::logger::priority priority_)
     {
       _logging_priority_ = priority_;
-      return;
     }
 
     datatools::logger::priority angle_driver::get_logging_priority() const
@@ -48,7 +46,6 @@ namespace snemo {
     angle_driver::angle_driver()
     {
       _set_defaults();
-      return;
     }
 
     // Destructor
@@ -57,7 +54,6 @@ namespace snemo {
       if (is_initialized()) {
         reset();
       }
-      return;
     }
 
     void angle_driver::_set_defaults()
@@ -65,7 +61,6 @@ namespace snemo {
 
       _initialized_ = false;
       _logging_priority_ = datatools::logger::PRIO_WARNING;
-      return;
     }
 
     // Initialization :
@@ -81,14 +76,12 @@ namespace snemo {
       set_logging_priority(lp);
 
       _set_initialized(true);
-      return;
     }
 
     void angle_driver::reset()
     {
       _set_defaults();
       _set_initialized(false);
-      return;
     }
 
     void angle_driver::process(const snemo::datamodel::particle_track & pt_,
@@ -96,7 +89,6 @@ namespace snemo {
     {
       DT_THROW_IF(! is_initialized(), std::logic_error, "Driver '" << get_id() << "' is already initialized !");
       this->_process_algo(pt_, angle_.get_angle());
-      return;
     }
 
     void angle_driver::process(const snemo::datamodel::particle_track & pt1_,
@@ -105,7 +97,6 @@ namespace snemo {
     {
       DT_THROW_IF(! is_initialized(), std::logic_error, "Driver '" << get_id() << "' is already initialized !");
       this->_process_algo(pt1_, pt2_, angle_.get_angle());
-      return;
     }
 
     void angle_driver::_process_algo(const snemo::datamodel::particle_track & pt_,
@@ -131,7 +122,6 @@ namespace snemo {
       }
 
       DT_LOG_TRACE(get_logging_priority(), "Exiting...");
-      return;
     }
 
     void angle_driver::_process_algo(const snemo::datamodel::particle_track & pt1_,
@@ -160,7 +150,6 @@ namespace snemo {
         angle_ = std::acos(particle_dir1 * particle_dir2) / M_PI * 180 * CLHEP::degree;
       }
       DT_LOG_TRACE(get_logging_priority(), "Exiting...");
-      return;
     }
 
     void angle_driver::_get_direction(const snemo::datamodel::particle_track & pt_,
@@ -211,7 +200,6 @@ namespace snemo {
 
       // Return a normalized direction
       direction_ /= direction_.mag();
-      return;
     }
 
     // static
@@ -235,7 +223,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::reconstruction::angle_driver, ocd_)
   ocd_.set_class_documentation("The driver determine angle between particle tracks");
   ocd_.set_validation_support(true);
   ocd_.lock();
-  return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 DOCD_CLASS_SYSTEM_REGISTRATION(snemo::reconstruction::angle_driver,

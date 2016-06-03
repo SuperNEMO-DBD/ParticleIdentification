@@ -18,12 +18,10 @@ namespace snemo {
 
     tof_measurement::tof_measurement()
     {
-      return;
     }
 
     tof_measurement::~tof_measurement()
     {
-      return;
     }
 
     bool tof_measurement::has_internal_probabilities() const
@@ -100,8 +98,6 @@ namespace snemo {
         }
         out_ << "Value #" << i << " = " << pext/CLHEP::perCent << "%" << std::endl;
       }
-
-      return;
     }
 
   } // end of namespace datamodel

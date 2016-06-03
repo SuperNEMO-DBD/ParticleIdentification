@@ -32,7 +32,6 @@ namespace snemo {
       datatools::invalidate(_int_prob_range_max_);
       datatools::invalidate(_ext_prob_range_min_);
       datatools::invalidate(_ext_prob_range_max_);
-      return;
     }
 
     uint32_t tof_measurement_cut::get_mode() const
@@ -66,13 +65,11 @@ namespace snemo {
       _set_defaults();
       this->register_supported_user_data_type<snemo::datamodel::base_topology_measurement>();
       this->register_supported_user_data_type<snemo::datamodel::tof_measurement>();
-      return;
     }
 
     tof_measurement_cut::~tof_measurement_cut()
     {
       if (is_initialized()) this->tof_measurement_cut::reset();
-      return;
     }
 
     void tof_measurement_cut::reset()
@@ -80,7 +77,6 @@ namespace snemo {
       _set_defaults();
       this->i_cut::_reset();
       this->i_cut::_set_initialized(false);
-      return;
     }
 
     void tof_measurement_cut::initialize(const datatools::properties & configuration_,
@@ -213,7 +209,6 @@ namespace snemo {
      }
 
       this->i_cut::_set_initialized(true);
-      return;
     }
 
 

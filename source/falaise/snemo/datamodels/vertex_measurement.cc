@@ -16,12 +16,10 @@ namespace snemo {
     {
       _vertex_.invalidate();
       datatools::invalidate(_probability_);
-      return;
     }
 
     vertex_measurement::~vertex_measurement()
     {
-      return;
     }
 
     bool vertex_measurement::has_vertex() const
@@ -55,7 +53,6 @@ namespace snemo {
     void vertex_measurement::set_probability(const double probability_)
     {
       _probability_ = probability_;
-      return;
     }
 
     bool vertex_measurement::has_vertices_distance() const
@@ -109,7 +106,6 @@ namespace snemo {
         indent_oss << indent_ << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
         _vertex_.tree_dump(out_, "", indent_oss.str(), true);
       }
-      return;
     }
 
   } // end of namespace datamodel

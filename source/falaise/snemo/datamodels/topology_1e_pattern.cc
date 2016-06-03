@@ -29,12 +29,10 @@ namespace snemo {
     topology_1e_pattern::topology_1e_pattern()
       : base_topology_pattern()
     {
-      return;
     }
 
     topology_1e_pattern::~topology_1e_pattern()
     {
-      return;
     }
 
     bool topology_1e_pattern::has_electron_track() const

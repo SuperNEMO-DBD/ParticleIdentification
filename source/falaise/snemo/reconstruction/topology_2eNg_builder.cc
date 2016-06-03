@@ -84,7 +84,6 @@ namespace snemo {
           if (drivers.EMD) drivers.EMD->process(gamma, *ptr_energy);
         }
       }
-      return;
     }
 
   } // end of namespace reconstruction

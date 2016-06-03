@@ -19,12 +19,10 @@ namespace snemo {
     energy_measurement::energy_measurement()
     {
       datatools::invalidate(_energy_);
-      return;
     }
 
     energy_measurement::~energy_measurement()
     {
-      return;
     }
 
     bool energy_measurement::has_energy() const
@@ -35,7 +33,6 @@ namespace snemo {
     void energy_measurement::set_energy(double energy_)
     {
       _energy_ = energy_;
-      return;
     }
 
     const double & energy_measurement::get_energy() const
@@ -64,7 +61,6 @@ namespace snemo {
       } else {
         out_ << "<no value>" << std::endl;
       }
-      return;
     }
 
   } // end of namespace datamodel

@@ -78,13 +78,11 @@ namespace snemo {
       _set_defaults();
       this->register_supported_user_data_type<snemo::datamodel::base_topology_measurement>();
       this->register_supported_user_data_type<snemo::datamodel::vertex_measurement>();
-      return;
     }
 
     vertices_measurement_cut::~vertices_measurement_cut()
     {
       if (is_initialized()) this->vertices_measurement_cut::reset();
-      return;
     }
 
     void vertices_measurement_cut::reset()
@@ -92,7 +90,6 @@ namespace snemo {
       _set_defaults();
       this->i_cut::_reset();
       this->i_cut::_set_initialized(false);
-      return;
     }
 
     void vertices_measurement_cut::initialize(const datatools::properties & configuration_,
@@ -279,7 +276,6 @@ namespace snemo {
       }
 
       this->i_cut::_set_initialized(true);
-      return;
     }
 
     int vertices_measurement_cut::_accept()
@@ -532,7 +528,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::cut::vertices_measurement_cut, ocd_)
 
   ocd_.set_validation_support(true);
   ocd_.lock();
-  return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 

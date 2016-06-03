@@ -29,7 +29,6 @@ namespace snemo {
     {
       min = 0;
       max = 0;
-      return;
     }
 
     void pid_cut::particle_range::parse(const datatools::properties & setup_,
@@ -41,37 +40,27 @@ namespace snemo {
       if (setup_.has_key(prefix_ + "_range.max")) {
         max = setup_.fetch_integer(prefix_ + "_range.max");
       }
-      return;
     }
 
     bool pid_cut::particle_range::check(const size_t n_)
     {
-      if (n_ < min) {
-        return false;
-      }
-      if (n_ > max) {
-        return false;
-      }
-      return true;
+      return ((n_ < min) || (n_ > max)) ? false : true;
     }
 
     void pid_cut::_set_defaults()
     {
       _PTD_label_ = snemo::datamodel::data_info::default_particle_track_data_label();
-      return;
     }
 
     pid_cut::pid_cut(datatools::logger::priority logger_priority_)
       : cuts::i_cut(logger_priority_)
     {
       _set_defaults();
-      return;
     }
 
     pid_cut::~pid_cut()
     {
       if (is_initialized()) this->pid_cut::reset();
-      return;
     }
 
     void pid_cut::reset()
@@ -79,7 +68,6 @@ namespace snemo {
       _set_defaults();
       this->i_cut::_reset();
       this->i_cut::_set_initialized(false);
-      return;
     }
 
     void pid_cut::initialize(const datatools::properties & configuration_,
@@ -102,7 +90,6 @@ namespace snemo {
       _undefined_range_.parse(configuration_, "undefined");
 
       this->i_cut::_set_initialized(true);
-      return;
     }
 
 

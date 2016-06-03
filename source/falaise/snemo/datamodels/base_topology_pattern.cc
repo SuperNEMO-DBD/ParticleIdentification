@@ -17,12 +17,10 @@ namespace snemo {
 
     base_topology_pattern::base_topology_pattern()
     {
-      return;
     }
 
     base_topology_pattern::~base_topology_pattern()
     {
-      return;
     }
 
     snemo::datamodel::base_topology_pattern::particle_track_dict_type & base_topology_pattern::get_particle_track_dictionary()
@@ -143,8 +141,6 @@ namespace snemo {
           a_meas.tree_dump(out_, "", indent2.str());
         }
       }
-
-      return;
     }
 
   } // end of namespace datamodel

@@ -32,12 +32,10 @@ namespace snemo {
     topology_1e1p_pattern::topology_1e1p_pattern()
       : topology_1e_pattern()
     {
-      return;
     }
 
     topology_1e1p_pattern::~topology_1e1p_pattern()
     {
-      return;
     }
 
     bool topology_1e1p_pattern::has_positron_track() const

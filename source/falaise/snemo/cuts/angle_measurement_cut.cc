@@ -28,7 +28,6 @@ namespace snemo {
       _mode_ = MODE_UNDEFINED;
       datatools::invalidate(_angle_range_min_);
       datatools::invalidate(_angle_range_max_);
-      return;
     }
 
     uint32_t angle_measurement_cut::get_mode() const
@@ -52,13 +51,11 @@ namespace snemo {
       _set_defaults();
       this->register_supported_user_data_type<snemo::datamodel::base_topology_measurement>();
       this->register_supported_user_data_type<snemo::datamodel::angle_measurement>();
-      return;
     }
 
     angle_measurement_cut::~angle_measurement_cut()
     {
       if (is_initialized()) this->angle_measurement_cut::reset();
-      return;
     }
 
     void angle_measurement_cut::reset()
@@ -66,7 +63,6 @@ namespace snemo {
       _set_defaults();
       this->i_cut::_reset();
       this->i_cut::_set_initialized(false);
-      return;
     }
 
     void angle_measurement_cut::initialize(const datatools::properties & configuration_,
@@ -128,7 +124,6 @@ namespace snemo {
         } // end if is_mode_range_angle
       }
       this->i_cut::_set_initialized(true);
-      return;
     }
 
 
@@ -285,7 +280,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::cut::angle_measurement_cut, ocd_)
 
   ocd_.set_validation_support(true);
   ocd_.lock();
-  return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 

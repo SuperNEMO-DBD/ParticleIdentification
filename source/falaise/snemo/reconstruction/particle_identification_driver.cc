@@ -25,7 +25,6 @@ namespace snemo {
     void particle_identification_driver::set_initialized(const bool initialized_)
     {
       _initialized_ = initialized_;
-      return;
     }
 
     bool particle_identification_driver::is_initialized() const
@@ -36,7 +35,6 @@ namespace snemo {
     void particle_identification_driver::set_logging_priority(const datatools::logger::priority priority_)
     {
       _logging_priority_ = priority_;
-      return;
     }
 
     datatools::logger::priority particle_identification_driver::get_logging_priority() const
@@ -54,7 +52,6 @@ namespace snemo {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Driver is already initialized !");
       _cut_manager_ = &cmgr_;
-      return;
     }
 
     const cuts::cut_manager & particle_identification_driver::get_cut_manager() const
@@ -91,7 +88,6 @@ namespace snemo {
     {
       _set_defaults();
       set_initialized(false);
-      return;
     }
 
     // Destructor
@@ -100,7 +96,6 @@ namespace snemo {
       if (is_initialized()) {
         reset();
       }
-      return;
     }
 
     // Initialize the gamma tracker through configuration properties
@@ -156,7 +151,6 @@ namespace snemo {
       }
 
       set_initialized(true);
-      return;
     }
 
     // Reset the gamma tracker
@@ -164,7 +158,6 @@ namespace snemo {
     {
       _set_defaults();
       set_initialized(false);
-      return;
     }
 
     int particle_identification_driver::process(snemo::datamodel::particle_track_data & ptd_)
@@ -187,7 +180,6 @@ namespace snemo {
       _logging_priority_ = datatools::logger::PRIO_WARNING;
       _mode_ = MODE_UNDEFINED;
       _cut_manager_ = 0;
-      return;
     }
 
     int particle_identification_driver::_process_algo(snemo::datamodel::particle_track_data & ptd_)
@@ -280,7 +272,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::reconstruction::particle_identification_d
 
   ocd_.set_validation_support(true);
   ocd_.lock();
-  return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 DOCD_CLASS_SYSTEM_REGISTRATION(snemo::reconstruction::particle_identification_driver,

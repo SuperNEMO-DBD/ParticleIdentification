@@ -27,19 +27,16 @@ namespace snemo {
     {
       _TD_label_ = "TD";//snemo::datamodel::data_info::default_topology_data_label();
       _cuts_.clear();
-      return;
     }
     channel_cut::channel_cut(datatools::logger::priority logger_priority_)
       : cuts::i_cut(logger_priority_)
     {
       _set_defaults();
-      return;
     }
 
     channel_cut::~channel_cut()
     {
       if (is_initialized()) this->channel_cut::reset();
-      return;
     }
 
     void channel_cut::reset()
@@ -47,7 +44,6 @@ namespace snemo {
       _set_defaults();
       this->i_cut::_reset();
       this->i_cut::_set_initialized(false);
-      return;
     }
 
     void channel_cut::initialize(const datatools::properties & configuration_,
@@ -83,7 +79,6 @@ namespace snemo {
       }
 
       this->i_cut::_set_initialized(true);
-      return;
     }
 
     int channel_cut::_accept()
@@ -205,7 +200,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::cut::channel_cut, ocd_)
 
   ocd_.set_validation_support(true);
   ocd_.lock();
-  return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 

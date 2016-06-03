@@ -36,7 +36,6 @@ namespace snemo {
     void topology_driver::set_initialized(const bool initialized_)
     {
       _initialized_ = initialized_;
-      return;
     }
 
     bool topology_driver::is_initialized() const
@@ -47,7 +46,6 @@ namespace snemo {
     void topology_driver::set_logging_priority(const datatools::logger::priority priority_)
     {
       _logging_priority_ = priority_;
-      return;
     }
 
     datatools::logger::priority topology_driver::get_logging_priority() const
@@ -60,7 +58,6 @@ namespace snemo {
     {
       _set_defaults();
       set_initialized(false);
-      return;
     }
 
     // Destructor
@@ -69,7 +66,6 @@ namespace snemo {
       if (is_initialized()) {
         reset();
       }
-      return;
     }
 
     // Initialize the gamma tracker through configuration properties
@@ -129,7 +125,6 @@ namespace snemo {
       }
 
       set_initialized(true);
-      return;
     }
 
     // Reset the gamma tracker
@@ -137,7 +132,6 @@ namespace snemo {
     {
       _set_defaults();
       set_initialized(false);
-      return;
     }
 
     int topology_driver::process(const snemo::datamodel::particle_track_data & ptd_,
@@ -163,7 +157,6 @@ namespace snemo {
       _drivers_.VD.reset(0);
       _drivers_.AMD.reset(0);
       _drivers_.EMD.reset(0);
-      return;
     }
 
     int topology_driver::_process_algo(const snemo::datamodel::particle_track_data & ptd_,
@@ -265,8 +258,6 @@ namespace snemo {
       ::snemo::reconstruction::vertex_driver::init_ocd(ocd_);
       ::snemo::reconstruction::angle_driver::init_ocd(ocd_);
       ::snemo::reconstruction::energy_driver::init_ocd(ocd_);
-
-      return;
     }
 
   }  // end of namespace reconstruction
@@ -287,7 +278,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::reconstruction::topology_driver, ocd_)
 
   ocd_.set_validation_support(true);
   ocd_.lock();
-  return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 DOCD_CLASS_SYSTEM_REGISTRATION(snemo::reconstruction::topology_driver,

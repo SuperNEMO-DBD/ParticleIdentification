@@ -98,7 +98,6 @@ namespace snemo {
       } else {
         DT_LOG_WARNING(logging, "Particle track is not associated to any calorimeter block !");
       }
-      return;
     }
 
     double tof_driver::tof_tool::get_mass(const snemo::datamodel::particle_track & particle_)
@@ -197,13 +196,11 @@ namespace snemo {
     void tof_driver::_set_initialized(bool i_)
     {
       _initialized_ = i_;
-      return;
     }
 
     void tof_driver::set_logging_priority(const datatools::logger::priority priority_)
     {
       _logging_priority_ = priority_;
-      return;
     }
 
     datatools::logger::priority tof_driver::get_logging_priority() const
@@ -215,7 +212,6 @@ namespace snemo {
     tof_driver::tof_driver()
     {
       _set_defaults();
-      return;
     }
 
     // Destructor
@@ -224,14 +220,12 @@ namespace snemo {
       if (is_initialized()) {
         reset();
       }
-      return;
     }
 
     void tof_driver::_set_defaults()
     {
       _initialized_ = false;
       _logging_priority_ = datatools::logger::PRIO_WARNING;
-      return;
     }
 
     // Initialization :
@@ -249,7 +243,6 @@ namespace snemo {
       tof_tool::logging = lp;
 
       _set_initialized(true);
-      return;
     }
 
     void tof_driver::reset()
@@ -258,7 +251,6 @@ namespace snemo {
                   "Driver '" << get_id() << "' is not initialized !");
       _set_defaults();
       _set_initialized(false);
-      return;
     }
 
     void tof_driver::process(const snemo::datamodel::particle_track & pt1_,
@@ -268,15 +260,12 @@ namespace snemo {
       DT_THROW_IF(! is_initialized(), std::logic_error,
                   "Driver '" << get_id() << "' is not initialized !");
       this->_process_algo(pt1_, pt2_, tof_.get_internal_probabilities(), tof_.get_external_probabilities());
-      return;
     }
 
     void tof_driver::_process_algo(const snemo::datamodel::particle_track & pt1_,
                                    const snemo::datamodel::particle_track & pt2_,
                                    std::vector<double> & proba_int_, std::vector<double> & proba_ext_)
     {
-      DT_LOG_TRACE(get_logging_priority(), "Entering...");
-
       if (! pt1_.has_associated_calorimeter_hits() ||
           ! pt2_.has_associated_calorimeter_hits()) {
         DT_LOG_WARNING(get_logging_priority(), "No associated calorimeter !");
@@ -300,9 +289,6 @@ namespace snemo {
         DT_LOG_WARNING(get_logging_priority(), "Topology not supported !");
         return;
       }
-
-      DT_LOG_TRACE(get_logging_priority(), "Exiting...");
-      return;
     }
 
     void tof_driver::_process_charged_particles(const snemo::datamodel::particle_track & pt1_,
@@ -342,7 +328,6 @@ namespace snemo {
 
       DT_LOG_DEBUG(get_logging_priority(), "P_int " << proba_int_.front()/CLHEP::perCent << " %");
       DT_LOG_DEBUG(get_logging_priority(), "P_ext " << proba_ext_.front()/CLHEP::perCent << " %");
-      return;
     }
 
     void tof_driver::_process_charged_gamma_particles(const snemo::datamodel::particle_track & pt1_,
@@ -393,7 +378,6 @@ namespace snemo {
         DT_LOG_DEBUG(get_logging_priority(), "P_int " << proba_int_.back());
         DT_LOG_DEBUG(get_logging_priority(), "P_ext " << proba_ext_.back());
       }
-      return;
     }
 
     void tof_driver::_get_vertex_to_calo_info_(const snemo::datamodel::particle_track & ptc_,
@@ -444,7 +428,6 @@ namespace snemo {
       track_length_ = (electron_foil_vertex - vertex_.get_position()).mag();
       time_ = a_calo_hit.get_time();
       sigma_time_ = a_calo_hit.get_sigma_time();
-      return;
     }
 
     // static
@@ -473,7 +456,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::reconstruction::tof_driver, ocd_)
 
   ocd_.set_validation_support(true);
   ocd_.lock();
-  return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 DOCD_CLASS_SYSTEM_REGISTRATION(snemo::reconstruction::tof_driver,

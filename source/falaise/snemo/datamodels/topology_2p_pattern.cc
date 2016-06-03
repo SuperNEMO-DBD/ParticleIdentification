@@ -32,12 +32,10 @@ namespace snemo {
     topology_2p_pattern::topology_2p_pattern()
       : base_topology_pattern()
     {
-      return;
     }
 
     topology_2p_pattern::~topology_2p_pattern()
     {
-      return;
     }
 
     bool topology_2p_pattern::has_positrons_energy() const

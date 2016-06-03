@@ -28,12 +28,10 @@ namespace snemo {
       : topology_2e_pattern()
     {
       _number_of_gammas_ = 0;
-      return;
     }
 
     topology_2eNg_pattern::~topology_2eNg_pattern()
     {
-      return;
     }
 
     bool topology_2eNg_pattern::has_number_of_gammas() const
@@ -44,7 +42,6 @@ namespace snemo {
     void topology_2eNg_pattern::set_number_of_gammas(const size_t ngammas_)
     {
       _number_of_gammas_ = ngammas_;
-      return;
     }
 
     size_t topology_2eNg_pattern::get_number_of_gammas() const
@@ -70,7 +67,6 @@ namespace snemo {
           = get_measurement_as<snemo::datamodel::energy_measurement>(oss.str());
         g_energies_.push_back(a_energy_meas.get_energy());
       }
-      return;
     }
 
     bool topology_2eNg_pattern::has_electrons_gammas_tof_probabilities() const
@@ -93,7 +89,6 @@ namespace snemo {
           eg_pint_.push_back(a_tof_meas.get_internal_probabilities());
         }
       }
-      return;
     }
 
     void topology_2eNg_pattern::fetch_electrons_gammas_external_probabilities(topology_2eNg_pattern::tof_collection_type & eg_pext_) const
@@ -111,7 +106,6 @@ namespace snemo {
           eg_pext_.push_back(a_tof_meas.get_external_probabilities());
         }
       }
-      return;
     }
 
     bool topology_2eNg_pattern::has_electron_min_gammas_tof_probabilities() const
@@ -136,7 +130,6 @@ namespace snemo {
             = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
           eg_pint_.push_back(a_tof_meas.get_internal_probabilities());
       }
-      return;
     }
 
     void topology_2eNg_pattern::fetch_electron_min_gammas_external_probabilities(topology_2eNg_pattern::tof_collection_type & eg_pext_) const
@@ -153,7 +146,6 @@ namespace snemo {
             = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
           eg_pext_.push_back(a_tof_meas.get_external_probabilities());
       }
-      return;
     }
 
     bool topology_2eNg_pattern::has_electron_max_gammas_tof_probabilities() const
@@ -178,7 +170,6 @@ namespace snemo {
             = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
           eg_pint_.push_back(a_tof_meas.get_internal_probabilities());
       }
-      return;
     }
 
     void topology_2eNg_pattern::fetch_electron_max_gammas_external_probabilities(topology_2eNg_pattern::tof_collection_type & eg_pext_) const
@@ -195,7 +186,6 @@ namespace snemo {
             = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
           eg_pext_.push_back(a_tof_meas.get_external_probabilities());
       }
-      return;
     }
 
   } // end of namespace datamodel

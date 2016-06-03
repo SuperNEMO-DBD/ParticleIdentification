@@ -28,7 +28,6 @@ namespace snemo {
       ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
       ar_ & boost::serialization::make_nvp("pattern", _pattern_);
       ar_ & boost::serialization::make_nvp("auxiliaries", _auxiliaries_);
-      return;
     }
 
   } // end of namespace datamodel

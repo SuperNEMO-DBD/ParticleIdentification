@@ -19,12 +19,10 @@ namespace snemo {
     angle_measurement::angle_measurement()
     {
       datatools::invalidate(_angle_);
-      return;
     }
 
     angle_measurement::~angle_measurement()
     {
-      return;
     }
 
     bool angle_measurement::has_angle() const
@@ -35,7 +33,7 @@ namespace snemo {
     void angle_measurement::set_angle(double angle_)
     {
       _angle_ = angle_;
-      return;
+
     }
 
     const double & angle_measurement::get_angle() const
@@ -64,7 +62,6 @@ namespace snemo {
       } else {
         out_ << "<no value>" << std::endl;
       }
-      return;
     }
 
   } // end of namespace datamodel

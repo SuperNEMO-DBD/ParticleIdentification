@@ -30,7 +30,6 @@ namespace snemo {
     {
       _mode_ = MODE_UNDEFINED;
       _TD_label_ = "TD";//snemo::datamodel::data_info::default_topology_data_label();
-      return;
     }
 
     uint32_t topology_data_cut::get_mode() const
@@ -62,13 +61,11 @@ namespace snemo {
       : cuts::i_cut(logger_priority_)
     {
       _set_defaults();
-      return;
     }
 
     topology_data_cut::~topology_data_cut()
     {
       if (is_initialized()) this->topology_data_cut::reset();
-      return;
     }
 
     void topology_data_cut::reset()
@@ -76,7 +73,6 @@ namespace snemo {
       _set_defaults();
       this->i_cut::_reset();
       this->i_cut::_set_initialized(false);
-      return;
     }
 
     void topology_data_cut::initialize(const datatools::properties & configuration_,
@@ -114,7 +110,6 @@ namespace snemo {
       }
 
       this->i_cut::_set_initialized(true);
-      return;
     }
 
     int topology_data_cut::_accept()

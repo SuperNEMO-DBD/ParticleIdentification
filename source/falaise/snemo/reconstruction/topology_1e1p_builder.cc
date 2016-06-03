@@ -73,8 +73,6 @@ namespace snemo {
         meas["angle_" + e1_label + "_" + p1_label].reset(ptr_angle);
         if (drivers.AMD) drivers.AMD->process(e1, p1, *ptr_angle);
       }
-
-      return;
     }
 
   } // end of namespace reconstruction

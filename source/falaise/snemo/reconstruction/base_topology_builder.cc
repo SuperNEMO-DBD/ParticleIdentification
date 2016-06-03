@@ -23,7 +23,6 @@ namespace snemo {
     void base_topology_builder::set_measurement_drivers(const measurement_drivers & drivers_)
     {
       _drivers = &drivers_;
-      return;
     }
 
     const measurement_drivers & base_topology_builder::get_measurement_drivers() const
@@ -34,12 +33,10 @@ namespace snemo {
     base_topology_builder::base_topology_builder()
     {
       _drivers = 0;
-      return;
     }
 
     base_topology_builder::~base_topology_builder()
     {
-      return;
     }
 
     snemo::datamodel::base_topology_pattern::handle_type base_topology_builder::create_pattern()
@@ -86,7 +83,6 @@ namespace snemo {
         }
         tracks_[key.str()] = *i_particle;
       }
-      return;
     }
 
   } // end of namespace reconstruction

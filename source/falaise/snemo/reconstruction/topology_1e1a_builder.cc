@@ -59,7 +59,6 @@ namespace snemo {
         if (drivers.VD) drivers.VD->process(e1, a1, *ptr_vertex_measurement);
       }
 
-      return;
     }
 
   } // end of namespace reconstruction

@@ -15,13 +15,11 @@ namespace snemo {
     void topology_data::set_pattern_handle(const handle_pattern & pattern_handle_)
     {
       _pattern_ = pattern_handle_;
-      return;
     }
 
     void topology_data::detach_pattern()
     {
       _pattern_.reset();
-      return;
     }
 
     topology_data::handle_pattern & topology_data::get_pattern_handle()
@@ -56,26 +54,22 @@ namespace snemo {
 
     topology_data::topology_data()
     {
-      return;
     }
 
     topology_data::~topology_data()
     {
       this->reset();
-      return;
     }
 
     void topology_data::reset()
     {
       this->clear();
-      return;
     }
 
     void topology_data::clear()
     {
       detach_pattern();
       _auxiliaries_.clear();
-      return;
     }
 
     void topology_data::tree_dump(std::ostream      & out_,
@@ -113,8 +107,6 @@ namespace snemo {
         indent_oss << datatools::i_tree_dumpable::inherit_skip_tag(inherit_) ;
         _auxiliaries_.tree_dump(out_, "", indent_oss.str());
       }
-
-      return;
     }
 
     // serial tag for datatools::serialization::i_serializable interface :

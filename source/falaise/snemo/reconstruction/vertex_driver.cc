@@ -36,13 +36,11 @@ namespace snemo {
     void vertex_driver::_set_initialized(bool i_)
     {
       _initialized_ = i_;
-      return;
     }
 
     void vertex_driver::set_logging_priority(const datatools::logger::priority priority_)
     {
       _logging_priority_ = priority_;
-      return;
     }
 
     datatools::logger::priority vertex_driver::get_logging_priority() const
@@ -54,7 +52,6 @@ namespace snemo {
     vertex_driver::vertex_driver()
     {
       _set_defaults();
-      return;
     }
 
     // Destructor
@@ -63,7 +60,6 @@ namespace snemo {
       if (is_initialized()) {
         reset();
       }
-      return;
     }
 
     void vertex_driver::_set_defaults()
@@ -71,7 +67,6 @@ namespace snemo {
 
       _initialized_ = false;
       _logging_priority_ = datatools::logger::PRIO_WARNING;
-      return;
     }
 
     // Initialization :
@@ -163,7 +158,7 @@ namespace snemo {
       }
 
       DT_LOG_TRACE(get_logging_priority(), "Exiting...");
-      return;
+
     }
 
     void vertex_driver::_find_common_vertex(const geomtools::blur_spot & vtx1_,
@@ -232,7 +227,6 @@ namespace snemo {
           a_spot.set_z_error(0);
 
       }
-      return ;
     }
 
     // static
@@ -256,7 +250,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::reconstruction::vertex_driver, ocd_)
   ocd_.set_class_documentation("The driver determines the spatial difference between vertices");
   ocd_.set_validation_support(true);
   ocd_.lock();
-  return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 DOCD_CLASS_SYSTEM_REGISTRATION(snemo::reconstruction::vertex_driver,

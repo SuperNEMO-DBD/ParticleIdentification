@@ -40,7 +40,6 @@ namespace snemo {
       _TD_label_ = "TD";//snemo::datamodel::data_info::default_topology_data_label();
       _pid_driver_.reset(0);
       _topology_driver_.reset(0);
-      return;
     }
 
     // Initialization :
@@ -88,7 +87,6 @@ namespace snemo {
       _topology_driver_->initialize(setup_);
 
       _set_initialized(true);
-      return;
     }
 
     void topology_module::reset()
@@ -97,7 +95,6 @@ namespace snemo {
                    "Module '" << get_name() << "' is not initialized !");
       _set_initialized(false);
       _set_defaults();
-      return;
     }
 
     // Constructor :
@@ -105,14 +102,12 @@ namespace snemo {
       : dpp::base_module(logging_priority_)
     {
       _set_defaults();
-      return;
     }
 
     // Destructor :
     topology_module::~topology_module()
     {
       if (is_initialized()) topology_module::reset();
-      return;
     }
 
     // Processing :
@@ -164,7 +159,6 @@ namespace snemo {
       _pid_driver_.get()->process(ptd_);
 
       DT_LOG_TRACE(get_logging_priority(), "Exiting.");
-      return;
     }
 
     void topology_module::_process(const snemo::datamodel::particle_track_data & ptd_,
@@ -176,7 +170,6 @@ namespace snemo {
       _topology_driver_.get()->process(ptd_,td_);
 
       DT_LOG_TRACE(get_logging_priority(), "Exiting.");
-      return;
     }
 
   } // end of namespace reconstruction
@@ -264,7 +257,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::reconstruction::topology_module, ocd_)
 
   ocd_.set_validation_support(true);
   ocd_.lock();
-  return;
 }
 
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation

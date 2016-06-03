@@ -29,12 +29,10 @@ namespace snemo {
       : topology_1e_pattern()
     {
       _number_of_gammas_ = 0;
-      return;
     }
 
     topology_1eNg_pattern::~topology_1eNg_pattern()
     {
-      return;
     }
 
     bool topology_1eNg_pattern::has_number_of_gammas() const
@@ -45,7 +43,6 @@ namespace snemo {
     void topology_1eNg_pattern::set_number_of_gammas(const size_t ngammas_)
     {
       _number_of_gammas_ = ngammas_;
-      return;
     }
 
     size_t topology_1eNg_pattern::get_number_of_gammas() const
@@ -71,7 +68,6 @@ namespace snemo {
           = get_measurement_as<snemo::datamodel::energy_measurement>(oss.str());
         energies_.push_back(a_energy_meas.get_energy());
       }
-      return;
     }
 
     bool topology_1eNg_pattern::has_electron_gammas_tof_probabilities() const
@@ -92,7 +88,6 @@ namespace snemo {
           = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
         eg_pint_.push_back(a_tof_meas.get_internal_probabilities());
       }
-      return;
     }
 
     void topology_1eNg_pattern::fetch_electron_gammas_external_probabilities(topology_1eNg_pattern::tof_collection_type & eg_pext_) const
@@ -107,7 +102,6 @@ namespace snemo {
           = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
         eg_pext_.push_back(a_tof_meas.get_external_probabilities());
       }
-      return;
     }
 
   } // end of namespace datamodel

@@ -29,12 +29,10 @@ namespace snemo {
     topology_1e1a_pattern::topology_1e1a_pattern()
       : topology_1e_pattern()
     {
-      return;
     }
 
     topology_1e1a_pattern::~topology_1e1a_pattern()
     {
-      return;
     }
 
     bool topology_1e1a_pattern::has_alpha_track() const
