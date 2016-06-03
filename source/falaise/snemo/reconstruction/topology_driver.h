@@ -68,6 +68,13 @@ namespace snemo {
       /// Algorithm id
       static const std::string & get_id();
 
+    public:
+      /// Constructor
+      topology_driver();
+
+      /// Destructor
+      virtual ~topology_driver();
+
       /// Initialization flag
       void set_initialized(const bool initialized_);
 
@@ -80,11 +87,6 @@ namespace snemo {
       /// Getting logging priority
       datatools::logger::priority get_logging_priority() const;
 
-      /// Constructor
-      topology_driver();
-
-      /// Destructor
-      virtual ~topology_driver();
 
       /// Initialize the gamma tracker through configuration properties
       virtual void initialize(const datatools::properties & setup_);

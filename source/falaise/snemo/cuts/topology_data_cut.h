@@ -60,6 +60,13 @@ namespace snemo {
         MODE_NO_PILE_UP         = datatools::bit_mask::bit04
       };
 
+    public:
+      /// Constructor
+      topology_data_cut(datatools::logger::priority logging_priority_ = datatools::logger::PRIO_FATAL);
+
+      /// Destructor
+      virtual ~topology_data_cut();
+      
       /// Return the cut mode
       uint32_t get_mode() const;
 
@@ -75,11 +82,6 @@ namespace snemo {
       /// Check mode NO_PILE_UP
       bool is_mode_no_pile_up() const;
 
-      /// Constructor
-      topology_data_cut(datatools::logger::priority logging_priority_ = datatools::logger::PRIO_FATAL);
-
-      /// Destructor
-      virtual ~topology_data_cut();
 
       /// Initilization
       virtual void initialize(const datatools::properties & configuration_,

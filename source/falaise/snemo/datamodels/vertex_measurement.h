@@ -24,7 +24,6 @@ namespace snemo {
     class vertex_measurement : public base_topology_measurement {
 
     public:
-
       /// Constructor
       vertex_measurement();
 

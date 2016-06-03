@@ -53,21 +53,21 @@ namespace snemo {
     class vertex_driver
     {
     public:
-
       /// Dedicated driver id
       static const std::string & get_id();
+
+    public:
+      /// Constructor
+      vertex_driver();
+
+      /// Destructor
+      ~vertex_driver();
 
       /// Setting logging priority
       void set_logging_priority(const datatools::logger::priority priority_);
 
       /// Getting logging priority
       datatools::logger::priority get_logging_priority() const;
-
-      /// Constructor
-      vertex_driver();
-
-      /// Destructor
-      ~vertex_driver();
 
       /// Main process
       void process(const snemo::datamodel::particle_track & pt1_,

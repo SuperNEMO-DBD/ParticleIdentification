@@ -34,7 +34,7 @@ int main()
     // Topology data bank :
     snemo::datamodel::topology_data TD;
     TD.set_pattern_handle(hP0);
-    TD.grab_auxiliaries().store_flag("test_td");
+    TD.get_auxiliaries().store_flag("test_td");
     TD.tree_dump(std::clog, "Topology data :");
 
   } catch (std::exception & x) {

@@ -49,21 +49,6 @@ namespace snemo {
     {
     public:
 
-      /// Structure holding particle range
-      struct particle_range {
-        size_t min;
-        size_t max;
-
-        /// Constructor
-        particle_range();
-
-        /// Parse min/max value from configuration
-        void parse(const datatools::properties & setup_, const std::string & prefix_);
-
-        /// Check number of particle
-        bool check(const size_t n_);
-      };
-
       /// Constructor
       pid_cut(datatools::logger::priority logging_priority_ = datatools::logger::PRIO_FATAL);
 
@@ -90,6 +75,21 @@ namespace snemo {
 
       std::string _PTD_label_; //!< Name of the "Particle track data" bank
 
+      /// Structure holding particle range
+      struct particle_range {
+        size_t min;
+        size_t max;
+
+        /// Constructor
+        particle_range();
+
+        /// Parse min/max value from configuration
+        void parse(const datatools::properties & setup_, const std::string & prefix_);
+
+        /// Check number of particle
+        bool check(const size_t n_);
+      };
+      
       particle_range _electron_range_; //!< Number of electrons
       particle_range _positron_range_; //!< Number of positrons
       particle_range _gamma_range_;    //!< Number of gammas

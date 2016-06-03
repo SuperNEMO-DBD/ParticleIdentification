@@ -24,6 +24,7 @@ namespace snemo {
     // Registration instantiation macro :
     CUT_REGISTRATION_IMPLEMENT(pid_cut, "snemo::cut::pid_cut")
 
+
     pid_cut::particle_range::particle_range()
     {
       min = 0;

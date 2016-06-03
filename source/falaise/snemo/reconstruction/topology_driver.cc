@@ -172,7 +172,7 @@ namespace snemo {
       DT_LOG_TRACE(get_logging_priority(), "Entering...");
 
       const std::string a_classification = topology_driver::_get_classification_(ptd_);
-      td_.grab_auxiliaries().store(snemo::datamodel::pid_utils::classification_label_key(),
+      td_.get_auxiliaries().store(snemo::datamodel::pid_utils::classification_label_key(),
                                    a_classification);
       const std::string a_builder_class_id = topology_driver::_get_builder_class_id_(a_classification);
       if (a_builder_class_id.empty()) {

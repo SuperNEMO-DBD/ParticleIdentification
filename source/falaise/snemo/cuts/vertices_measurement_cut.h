@@ -27,7 +27,6 @@ namespace snemo {
     class vertices_measurement_cut : public cuts::i_cut
     {
     public:
-
       /// Mode of the cut
       enum mode_type {
         MODE_UNDEFINED                  = 0,
@@ -38,6 +37,13 @@ namespace snemo {
         MODE_RANGE_VERTICES_DISTANCE_Y  = datatools::bit_mask::bit05,
         MODE_RANGE_VERTICES_DISTANCE_Z  = datatools::bit_mask::bit06,
       };
+
+    public:
+      /// Constructor
+      vertices_measurement_cut(datatools::logger::priority logging_priority_ = datatools::logger::PRIO_FATAL);
+
+      /// Destructor
+      virtual ~vertices_measurement_cut();
 
       /// Return the cut mode
       uint32_t get_mode() const;
@@ -62,12 +68,6 @@ namespace snemo {
 
       /// Check mode RANGE_VERTICES_DISTANCE_z
       bool is_mode_range_vertices_distance_z() const;
-
-      /// Constructor
-      vertices_measurement_cut(datatools::logger::priority logging_priority_ = datatools::logger::PRIO_FATAL);
-
-      /// Destructor
-      virtual ~vertices_measurement_cut();
 
       /// Initilization
       virtual void initialize(const datatools::properties & configuration_,

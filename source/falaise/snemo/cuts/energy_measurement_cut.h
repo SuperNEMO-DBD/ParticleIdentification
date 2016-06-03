@@ -35,6 +35,13 @@ namespace snemo {
         MODE_RANGE_ENERGY = datatools::bit_mask::bit02,
       };
 
+    public:
+      /// Constructor
+      energy_measurement_cut(datatools::logger::priority logging_priority_ = datatools::logger::PRIO_FATAL);
+
+      /// Destructor
+      virtual ~energy_measurement_cut();
+      
       /// Return the cut mode
       uint32_t get_mode() const;
 
@@ -46,12 +53,6 @@ namespace snemo {
 
       /// Check mode RANGE_ENERGY
       bool is_mode_range_energy() const;
-
-      /// Constructor
-      energy_measurement_cut(datatools::logger::priority logging_priority_ = datatools::logger::PRIO_FATAL);
-
-      /// Destructor
-      virtual ~energy_measurement_cut();
 
       /// Initilization
       virtual void initialize(const datatools::properties & configuration_,

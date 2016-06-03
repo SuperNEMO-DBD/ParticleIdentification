@@ -53,9 +53,16 @@ namespace snemo {
     class angle_driver
     {
     public:
-
       /// Dedicated driver id
       static const std::string & get_id();
+
+    public:
+      /// Constructor
+      angle_driver();
+
+      /// Destructor
+      ~angle_driver();
+
 
       /// Setting logging priority
       void set_logging_priority(const datatools::logger::priority priority_);
@@ -63,11 +70,6 @@ namespace snemo {
       /// Getting logging priority
       datatools::logger::priority get_logging_priority() const;
 
-      /// Constructor
-      angle_driver();
-
-      /// Destructor
-      ~angle_driver();
 
       /// Check if the driver is initialized
       bool is_initialized() const;

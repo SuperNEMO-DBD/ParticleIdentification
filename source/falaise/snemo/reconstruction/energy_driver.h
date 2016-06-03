@@ -51,9 +51,16 @@ namespace snemo {
     class energy_driver
     {
     public:
-
       /// Dedicated driver id
       static const std::string & get_id();
+
+    public:
+      /// Constructor
+      energy_driver();
+
+      /// Destructor
+      ~energy_driver();
+
 
       /// Setting logging priority
       void set_logging_priority(const datatools::logger::priority priority_);
@@ -61,11 +68,6 @@ namespace snemo {
       /// Getting logging priority
       datatools::logger::priority get_logging_priority() const;
 
-      /// Constructor
-      energy_driver();
-
-      /// Destructor
-      ~energy_driver();
 
       /// Main process
       void process(const snemo::datamodel::particle_track & pt_,

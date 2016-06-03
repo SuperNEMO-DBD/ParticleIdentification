@@ -34,10 +34,10 @@ namespace snemo {
                           public datatools::i_clear
     {
     public:
-
       /// Handle on topology pattern
       typedef datatools::handle<base_topology_pattern> handle_pattern;
 
+    public:
       /// Default constructor
       topology_data();
 
@@ -73,7 +73,7 @@ namespace snemo {
                     std::logic_error,
                     "Topology data does not hold any topology pattern !");
         const std::type_info & ti = typeid(T);
-        const std::type_info & tf = typeid(get_pattern());
+        const std::type_info & tf = typeid(decltype(get_pattern()));
         return ti == tf;
       }
 
@@ -101,7 +101,7 @@ namespace snemo {
       const datatools::properties & get_auxiliaries() const;
 
       /// Return a non mutable reference on the container of auxiliary properties
-      datatools::properties & grab_auxiliaries();
+      datatools::properties & get_auxiliaries();
 
       /// Reset the internals
       void reset();

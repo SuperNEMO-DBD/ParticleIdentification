@@ -54,7 +54,6 @@ namespace snemo {
     class particle_identification_driver
     {
     public:
-
       /// Mode of the PID driver
       enum mode_type {
         MODE_UNDEFINED = 0,
@@ -70,6 +69,13 @@ namespace snemo {
 
       /// Algorithm id
       static const std::string & get_id();
+
+    public:
+      /// Constructor
+      particle_identification_driver();
+
+      /// Destructor
+      virtual ~particle_identification_driver();
 
       /// Initialization flag
       void set_initialized(const bool initialized_);
@@ -103,12 +109,6 @@ namespace snemo {
 
       /// Check mode PID_USER
       bool is_mode_pid_user() const;
-
-      /// Constructor
-      particle_identification_driver();
-
-      /// Destructor
-      virtual ~particle_identification_driver();
 
       /// Initialize the gamma tracker through configuration properties
       virtual void initialize(const datatools::properties & setup_);

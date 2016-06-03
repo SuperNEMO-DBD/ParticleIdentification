@@ -44,7 +44,7 @@ namespace snemo {
       return _pattern_.get();
     }
 
-    datatools::properties & topology_data::grab_auxiliaries()
+    datatools::properties & topology_data::get_auxiliaries()
     {
       return _auxiliaries_;
     }

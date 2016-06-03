@@ -35,6 +35,13 @@ namespace snemo {
         MODE_RANGE_ANGLE = datatools::bit_mask::bit02,
       };
 
+    public:
+      /// Constructor
+      angle_measurement_cut(datatools::logger::priority logging_priority_ = datatools::logger::PRIO_FATAL);
+
+      /// Destructor
+      virtual ~angle_measurement_cut();
+
       /// Return the cut mode
       uint32_t get_mode() const;
 
@@ -47,11 +54,6 @@ namespace snemo {
       /// Check mode RANGE_ANGLE
       bool is_mode_range_angle() const;
 
-      /// Constructor
-      angle_measurement_cut(datatools::logger::priority logging_priority_ = datatools::logger::PRIO_FATAL);
-
-      /// Destructor
-      virtual ~angle_measurement_cut();
 
       /// Initilization
       virtual void initialize(const datatools::properties & configuration_,

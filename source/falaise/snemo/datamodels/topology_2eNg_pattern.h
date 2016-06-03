@@ -22,7 +22,6 @@ namespace snemo {
     class topology_2eNg_pattern : public topology_2e_pattern
     {
     public:
-
       /// Typedef for TOF dictionnary
       typedef std::vector<snemo::datamodel::tof_measurement::probability_type> tof_collection_type;
 
@@ -32,14 +31,15 @@ namespace snemo {
       /// Static function to return pattern identifier of the pattern
       static const std::string & pattern_id();
 
-      /// Return pattern identifier of the pattern
-      virtual std::string get_pattern_id() const;
-
+    public:
       /// Constructor
       topology_2eNg_pattern();
 
       /// Destructor
       virtual ~topology_2eNg_pattern();
+
+      /// Return pattern identifier of the pattern
+      virtual std::string get_pattern_id() const;
 
       /// Check number of gammas validity
       bool has_number_of_gammas() const;

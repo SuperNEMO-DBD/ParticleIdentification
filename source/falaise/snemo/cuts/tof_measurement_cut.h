@@ -43,6 +43,13 @@ namespace snemo {
         MODE_RANGE_ALL       = 2  //!< Require all probabilities
       };
 
+    public:
+      /// Constructor
+      tof_measurement_cut(datatools::logger::priority logging_priority_ = datatools::logger::PRIO_FATAL);
+
+      /// Destructor
+      virtual ~tof_measurement_cut();
+
       /// Return the cut mode
       uint32_t get_mode() const;
 
@@ -60,12 +67,6 @@ namespace snemo {
 
       /// Check mode RANGE_EXTERNAL_PROBABILITY
       bool is_mode_range_external_probability() const;
-
-      /// Constructor
-      tof_measurement_cut(datatools::logger::priority logging_priority_ = datatools::logger::PRIO_FATAL);
-
-      /// Destructor
-      virtual ~tof_measurement_cut();
 
       /// Initilization
       virtual void initialize(const datatools::properties & configuration_,

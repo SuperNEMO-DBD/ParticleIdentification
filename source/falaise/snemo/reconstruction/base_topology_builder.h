@@ -31,6 +31,11 @@ namespace snemo {
     class base_topology_builder
     {
     public:
+      /// Constructor
+      base_topology_builder();
+
+      /// Destructor
+      ~base_topology_builder();
 
       /// Check if measurement drivers are available
       bool has_measurement_drivers() const;
@@ -47,12 +52,6 @@ namespace snemo {
       /// Main function to build topology pattern
       virtual void build(const snemo::datamodel::particle_track_data & source_,
                          snemo::datamodel::base_topology_pattern & pattern_);
-
-      /// Constructor
-      base_topology_builder();
-
-      /// Destructor
-      ~base_topology_builder();
 
     protected:
 

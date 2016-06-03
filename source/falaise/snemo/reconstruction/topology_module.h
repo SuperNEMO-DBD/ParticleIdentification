@@ -60,7 +60,6 @@ namespace snemo {
     {
 
     public:
-
       /// Constructor
       topology_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
 

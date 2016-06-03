@@ -24,6 +24,7 @@ namespace snemo {
       /// Typedef for probability type
       typedef std::vector<double> probability_type;
 
+    public:
       /// Constructor
       tof_measurement();
 

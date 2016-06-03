@@ -60,39 +60,10 @@ namespace snemo {
     {
     public:
 
-      /// Toolbox for TOF calculation
-      struct tof_tool {
-
-        /// Gives the energy of particle
-        static double get_energy(const snemo::datamodel::particle_track & particle_);
-
-        /// Gives the mass of the particle
-        static double get_mass(const snemo::datamodel::particle_track & particle_);
-
-        /// Returns the beta
-        static double beta(double energy_, double mass_);
-
-        /// Gives the theoretical time of the track
-        static double get_theoretical_time(double energy_, double mass_, double track_length_);
-
-        /// Gives the times for two charged particles (single deposit)
-        static void get_time(const snemo::datamodel::particle_track & particle_,
-                             double & t_, double & sigma_t);
-
-        /// Gives the track length of an electron
-        static double get_charged_particle_track_length(const snemo::datamodel::particle_track & particle_);
-
-        /// Gives the track length of a gamma from the electron vertex
-        static double get_gamma_track_length(const snemo::datamodel::particle_track & gamma_,
-                                             const snemo::datamodel::particle_track & electron_,
-                                             const bool external_hyp_ = false);
-
-        static datatools::logger::priority logging; //!< Internal logging priority
-      };
-
       /// Dedicated driver id
       static const std::string & get_id();
 
+    public:
       /// Constructor
       tof_driver();
 
@@ -154,6 +125,7 @@ namespace snemo {
                                      double & track_length_, double & time_, double & sigma_time_);
 
     private:
+      struct tof_tool;
       bool _initialized_;                             //!< Initialization status
       datatools::logger::priority _logging_priority_; //!< Logging priority
     };
