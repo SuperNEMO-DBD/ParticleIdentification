@@ -138,7 +138,7 @@ namespace snemo {
       uint32_t cut_returned = cuts::SELECTION_INAPPLICABLE;
 
       // Get angle measurement
-      const snemo::datamodel::angle_measurement * ptr_meas = 0;
+      const snemo::datamodel::angle_measurement * ptr_meas = nullptr;
       if (is_user_data<snemo::datamodel::angle_measurement>()) {
         ptr_meas = &(get_user_data<snemo::datamodel::angle_measurement>());
       } else if (is_user_data<snemo::datamodel::base_topology_measurement>()) {

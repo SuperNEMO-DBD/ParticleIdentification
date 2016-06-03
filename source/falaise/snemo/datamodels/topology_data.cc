@@ -24,7 +24,7 @@ namespace snemo {
       return;
     }
 
-    topology_data::handle_pattern & topology_data::grab_pattern_handle()
+    topology_data::handle_pattern & topology_data::get_pattern_handle()
     {
       return _pattern_;
     }
@@ -34,7 +34,7 @@ namespace snemo {
       return _pattern_;
     }
 
-    base_topology_pattern & topology_data::grab_pattern()
+    base_topology_pattern & topology_data::get_pattern()
     {
       return _pattern_.grab();
     }

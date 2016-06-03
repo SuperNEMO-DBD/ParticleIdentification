@@ -43,7 +43,7 @@ namespace snemo {
       return _angle_;
     }
 
-    double & angle_measurement::grab_angle()
+    double & angle_measurement::get_angle()
     {
       return _angle_;
     }

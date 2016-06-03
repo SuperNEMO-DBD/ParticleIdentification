@@ -25,7 +25,7 @@ namespace snemo {
       return;
     }
 
-    snemo::datamodel::base_topology_pattern::particle_track_dict_type & base_topology_pattern::grab_particle_track_dictionary()
+    snemo::datamodel::base_topology_pattern::particle_track_dict_type & base_topology_pattern::get_particle_track_dictionary()
     {
       return _tracks_;
     }
@@ -60,7 +60,7 @@ namespace snemo {
       return _meas_.at(key_).get();
     }
 
-    snemo::datamodel::base_topology_pattern::measurement_dict_type & base_topology_pattern::grab_measurement_dictionary()
+    snemo::datamodel::base_topology_pattern::measurement_dict_type & base_topology_pattern::get_measurement_dictionary()
     {
       return _meas_;
     }

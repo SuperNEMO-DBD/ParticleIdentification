@@ -89,7 +89,7 @@ namespace snemo {
     int channel_cut::_accept()
     {
       // Get event record
-      const datatools::things & ER = get_user_data<datatools::things>();
+      auto& ER = get_user_data<datatools::things>();
 
       if (! ER.has(_TD_label_)) {
         DT_LOG_WARNING(get_logging_priority(), "Event record has no '" << _TD_label_ << "' bank !");
@@ -103,16 +103,14 @@ namespace snemo {
       const snemo::datamodel::base_topology_pattern & a_pattern = TD.get_pattern();
 
       // Loop over cuts
-      for (cut_collection_type::iterator icut = _cuts_.begin();
-           icut != _cuts_.end(); ++icut) {
-        const std::string & a_meas_label = icut->first;
+      for (auto& icut : _cuts_) {
+        const std::string & a_meas_label = icut.first;
         if (! a_pattern.has_measurement(a_meas_label)) {
           DT_LOG_DEBUG(get_logging_priority(), "Missing '" << a_meas_label << "' measurement !");
           return cuts::SELECTION_INAPPLICABLE;
         }
-        const snemo::datamodel::base_topology_measurement & a_meas = a_pattern.get_measurement(a_meas_label);
-        cuts::i_cut & a_cut = icut->second.grab();
-        a_cut.set_user_data(a_meas);
+        auto& a_cut = icut.second.grab();
+        a_cut.set_user_data(a_pattern.get_measurement(a_meas_label));
         const int status = a_cut.process();
         if (status == cuts::SELECTION_REJECTED) {
           DT_LOG_DEBUG(get_logging_priority(), "Event rejected by '"

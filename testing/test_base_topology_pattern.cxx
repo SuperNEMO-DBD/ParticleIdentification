@@ -22,8 +22,7 @@ int main()
     snemo::datamodel::base_topology_pattern & a_pattern = hTP0.grab();
 
     // Add associated measurement :
-    snemo::datamodel::base_topology_pattern::measurement_dict_type & meas_dict
-      = a_pattern.grab_measurement_dictionary();
+    auto meas_dict = a_pattern.get_measurement_dictionary();
     // Add fake TOF measurements
     meas_dict.insert(std::make_pair("fake_tof_1", new snemo::datamodel::tof_measurement));
     meas_dict.insert(std::make_pair("fake_tof_2", new snemo::datamodel::tof_measurement));

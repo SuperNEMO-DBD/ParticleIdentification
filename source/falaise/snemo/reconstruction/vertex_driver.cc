@@ -212,7 +212,7 @@ namespace snemo {
       if (! vertex_.has_probability() || vertex_.get_probability() < probability) {
         // Update vertex value
         vertex_.set_probability(probability);
-        geomtools::blur_spot & a_spot = vertex_.grab_vertex();
+        geomtools::blur_spot & a_spot = vertex_.get_vertex();
         a_spot.set_blur_dimension(vtx1_.get_blur_dimension());
         a_spot.set_position(bary);
         // temporary store the vertices distance in the barycenter errors

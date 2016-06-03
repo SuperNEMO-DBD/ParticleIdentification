@@ -54,13 +54,13 @@ namespace snemo {
       void set_pattern_handle(const handle_pattern & pattern_handle_);
 
       /// Return a mutable reference on the pattern handle
-      handle_pattern & grab_pattern_handle();
+      handle_pattern & get_pattern_handle();
 
       /// Return a non mutable reference on the pattern handle
       const handle_pattern & get_pattern_handle() const;
 
       /// Return a mutable reference on the pattern
-      base_topology_pattern & grab_pattern();
+      base_topology_pattern & get_pattern();
 
       /// Return a non mutable reference on the pattern
       const base_topology_pattern & get_pattern() const;
@@ -84,17 +84,17 @@ namespace snemo {
         DT_THROW_IF(! has_pattern_as<T>(),
                     std::logic_error,
                     "Invalid request on topology pattern type !");
-        return dynamic_cast<const T&>(get_pattern());
+        return dynamic_cast<const T&>(this->get_pattern());
       }
 
       /// Get a mutable topology pattern of a given type
       template<class T>
-      T & grab_pattern_as()
+      T & get_pattern_as()
       {
         DT_THROW_IF(! has_pattern_as<T>(),
                     std::logic_error,
                     "Invalid request on topology pattern type !");
-        return dynamic_cast<T&>(grab_pattern());
+        return dynamic_cast<T&>(this->get_pattern());
       }
 
       /// Return a mutable reference on the container of auxiliary properties

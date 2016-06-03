@@ -237,7 +237,7 @@ namespace snemo {
     {
       DT_THROW_IF(! is_initialized(), std::logic_error,
                   "Driver '" << get_id() << "' is not initialized !");
-      this->_process_algo(pt1_, pt2_, tof_.grab_internal_probabilities(), tof_.grab_external_probabilities());
+      this->_process_algo(pt1_, pt2_, tof_.get_internal_probabilities(), tof_.get_external_probabilities());
       return;
     }
 

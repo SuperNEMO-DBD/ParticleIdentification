@@ -43,7 +43,7 @@ namespace snemo {
       return _energy_;
     }
 
-    double & energy_measurement::grab_energy()
+    double & energy_measurement::get_energy()
     {
       return _energy_;
     }

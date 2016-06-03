@@ -192,7 +192,7 @@ namespace snemo {
 
       // Build new topology pattern
       new_builder->set_measurement_drivers(_drivers_);
-      new_builder->build(ptd_, td_.grab_pattern());
+      new_builder->build(ptd_, td_.get_pattern());
 
       if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
         DT_LOG_TRACE(get_logging_priority(), "New pattern: ");

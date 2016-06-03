@@ -48,7 +48,7 @@ namespace snemo {
       typedef std::map<std::string, handle_measurement> measurement_dict_type;
 
       /// Get a mutable reference to particle track dictionary
-      particle_track_dict_type & grab_particle_track_dictionary();
+      particle_track_dict_type & get_particle_track_dictionary();
 
       /// Get a non-mutable reference to particle track dictionary
       const particle_track_dict_type & get_particle_track_dictionary() const;
@@ -88,7 +88,7 @@ namespace snemo {
       }
 
       /// Get a mutable reference to measurement dictionary
-      measurement_dict_type & grab_measurement_dictionary();
+      measurement_dict_type & get_measurement_dictionary();
 
       /// Get a non-mutable reference to measurement dictionary
       const measurement_dict_type & get_measurement_dictionary() const;

@@ -93,7 +93,7 @@ namespace snemo {
                                 snemo::datamodel::energy_measurement & energy_)
     {
       DT_THROW_IF(! is_initialized(), std::logic_error, "Driver '" << get_id() << "' is already initialized !");
-      this->_process_algo(pt_, energy_.grab_energy());
+      this->_process_algo(pt_, energy_.get_energy());
       return;
     }
 

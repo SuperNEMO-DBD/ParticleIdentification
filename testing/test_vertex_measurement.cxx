@@ -18,7 +18,7 @@ int main()
     std::clog << "Test program for the 'vertex_measurement' class." << std::endl;
     // Fake vertex measurement
     snemo::datamodel::vertex_measurement VM;
-    geomtools::blur_spot & a_vertex = VM.grab_vertex();
+    geomtools::blur_spot & a_vertex = VM.get_vertex();
     geomtools::placement::from_string("10 -15 20 (mm)", a_vertex.grab_placement());
     VM.tree_dump(std::cout, "Vertex measurement dump:", "[notice]: ");
 

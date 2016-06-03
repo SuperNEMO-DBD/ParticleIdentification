@@ -37,7 +37,7 @@ namespace snemo {
       return _vertex_;
     }
 
-    geomtools::blur_spot & vertex_measurement::grab_vertex()
+    geomtools::blur_spot & vertex_measurement::get_vertex()
     {
       return _vertex_;
     }

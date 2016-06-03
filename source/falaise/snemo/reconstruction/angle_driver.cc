@@ -95,7 +95,7 @@ namespace snemo {
                                snemo::datamodel::angle_measurement & angle_)
     {
       DT_THROW_IF(! is_initialized(), std::logic_error, "Driver '" << get_id() << "' is already initialized !");
-      this->_process_algo(pt_, angle_.grab_angle());
+      this->_process_algo(pt_, angle_.get_angle());
       return;
     }
 
@@ -104,7 +104,7 @@ namespace snemo {
                                snemo::datamodel::angle_measurement & angle_)
     {
       DT_THROW_IF(! is_initialized(), std::logic_error, "Driver '" << get_id() << "' is already initialized !");
-      this->_process_algo(pt1_, pt2_, angle_.grab_angle());
+      this->_process_algo(pt1_, pt2_, angle_.get_angle());
       return;
     }
 

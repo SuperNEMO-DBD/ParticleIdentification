@@ -30,8 +30,7 @@ namespace snemo {
                   "No particle with label '" << e1_label << "' has been stored !");
       const snemo::datamodel::particle_track & e1 = pattern_.get_particle_track(e1_label);
 
-      snemo::datamodel::base_topology_pattern::measurement_dict_type & meas
-        = pattern_.grab_measurement_dictionary();
+      auto meas = pattern_.get_measurement_dictionary();
       const snemo::reconstruction::measurement_drivers & drivers
         = base_topology_builder::get_measurement_drivers();
       {

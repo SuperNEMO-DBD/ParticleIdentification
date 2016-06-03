@@ -37,7 +37,7 @@ namespace snemo {
       const double & get_angle() const;
 
       /// Get a mutable reference to angle
-      double & grab_angle();
+      double & get_angle();
 
       /// Smart print
       virtual void tree_dump(std::ostream      & out_    = std::clog,
