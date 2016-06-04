@@ -270,7 +270,7 @@ namespace snemo {
       if (is_user_data<snemo::datamodel::vertex_measurement>()) {
         ptr_meas = &(get_user_data<snemo::datamodel::vertex_measurement>());
       } else if (is_user_data<snemo::datamodel::base_topology_measurement>()) {
-        auto btm = get_user_data<snemo::datamodel::base_topology_measurement>();
+        auto& btm = get_user_data<snemo::datamodel::base_topology_measurement>();
         ptr_meas = dynamic_cast<const snemo::datamodel::vertex_measurement *>(&btm);
       } else {
         DT_THROW_IF(true, std::logic_error, "Invalid data type !");

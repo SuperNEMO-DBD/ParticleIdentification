@@ -128,7 +128,7 @@ namespace snemo {
       if (is_user_data<snemo::datamodel::energy_measurement>()) {
         ptr_meas = &(get_user_data<snemo::datamodel::energy_measurement>());
       } else if (is_user_data<snemo::datamodel::base_topology_measurement>()) {
-        auto btm = get_user_data<snemo::datamodel::base_topology_measurement>();
+        auto& btm = get_user_data<snemo::datamodel::base_topology_measurement>();
         ptr_meas = dynamic_cast<const snemo::datamodel::energy_measurement *>(&btm);
       } else {
         DT_THROW_IF(true, std::logic_error, "Invalid data type !");

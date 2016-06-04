@@ -205,17 +205,18 @@ namespace snemo {
       uint32_t cut_returned = cuts::SELECTION_INAPPLICABLE;
 
       // Get tof measurement
-      const snemo::datamodel::tof_measurement * ptr_meas = nullptr;
+      const snemo::datamodel::tof_measurement * ptr_meas = 0;
 
       if (is_user_data<snemo::datamodel::tof_measurement>()) {
         ptr_meas = &(get_user_data<snemo::datamodel::tof_measurement>());
       } else if (is_user_data<snemo::datamodel::base_topology_measurement>()) {
-        auto btm = get_user_data<snemo::datamodel::base_topology_measurement>();
+        auto& btm = get_user_data<snemo::datamodel::base_topology_measurement>();
         ptr_meas = dynamic_cast<const snemo::datamodel::tof_measurement *>(&btm);
       } else {
         DT_THROW_IF(true, std::logic_error, "Invalid data type !");
       }
-     auto a_tof_meas = *ptr_meas;
+
+      auto a_tof_meas = *ptr_meas;
 
       // Check if measurement has internal probability
       bool check_has_internal_probability = true;

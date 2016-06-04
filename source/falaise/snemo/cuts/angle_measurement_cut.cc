@@ -127,16 +127,16 @@ namespace snemo {
 
       // Get angle measurement
       const snemo::datamodel::angle_measurement * ptr_meas = nullptr;
+
       if (is_user_data<snemo::datamodel::angle_measurement>()) {
         ptr_meas = &(get_user_data<snemo::datamodel::angle_measurement>());
       } else if (is_user_data<snemo::datamodel::base_topology_measurement>()) {
-        const snemo::datamodel::base_topology_measurement & btm
-          = get_user_data<snemo::datamodel::base_topology_measurement>();
+        auto& btm = get_user_data<snemo::datamodel::base_topology_measurement>();
         ptr_meas = dynamic_cast<const snemo::datamodel::angle_measurement *>(&btm);
       } else {
         DT_THROW_IF(true, std::logic_error, "Invalid data type !");
       }
-      const snemo::datamodel::angle_measurement & a_angle_meas = *ptr_meas;
+      auto a_angle_meas = *ptr_meas;
 
       // Check if measurement has angle
       bool check_has_angle = true;
