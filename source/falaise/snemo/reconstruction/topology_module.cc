@@ -13,9 +13,6 @@
 // - Bayeux/cuts:
 #include <cuts/cut_service.h>
 #include <cuts/cut_manager.h>
-// - Bayeux/geomtools:
-#include <geomtools/geometry_service.h>
-#include <geomtools/manager.h>
 
 // This project:
 #include <falaise/snemo/datamodels/data_model.h>
@@ -34,12 +31,36 @@ namespace snemo {
     DPP_MODULE_REGISTRATION_IMPLEMENT(topology_module,
                                       "snemo::reconstruction::topology_module")
 
+
+    /// Private struct holding the implementation details
+    struct topology_module::TopologyModuleImpl {
+      std::string inputBank; //!< The label of the input data bank
+      std::string outputBank;  //!< The label of the output data bank
+      snemo::reconstruction::particle_identification_driver pidDriver; //! pid driver instance
+      snemo::reconstruction::topology_driver topoDriver; //! topology driver instance
+    };
+
+    // Constructor :
+    topology_module::topology_module(datatools::logger::priority p)
+    : dpp::base_module(p), tpmImpl_(new TopologyModuleImpl)
+    {
+      _set_defaults();
+    }
+
+    // Destructor :
+    topology_module::~topology_module()
+    {
+      if (is_initialized()) topology_module::reset();
+    }
+
+
+
     void topology_module::_set_defaults()
     {
-      _PTD_label_ = snemo::datamodel::data_info::default_particle_track_data_label();
-      _TD_label_ = "TD";//snemo::datamodel::data_info::default_topology_data_label();
-      _pid_driver_.reset(0);
-      _topology_driver_.reset(0);
+      tpmImpl_->inputBank= snemo::datamodel::data_info::default_particle_track_data_label();
+      tpmImpl_->outputBank = "TD";//snemo::datamodel::data_info::default_topology_data_label();
+      tpmImpl_->pidDriver.reset();
+      tpmImpl_->topoDriver.reset();
     }
 
     // Initialization :
@@ -54,11 +75,11 @@ namespace snemo {
       dpp::base_module::_common_initialize(setup_);
 
       if (setup_.has_key("PTD_label")) {
-        _PTD_label_ = setup_.fetch_string("PTD_label");
+        tpmImpl_->inputBank = setup_.fetch_string("PTD_label");
       }
 
       if (setup_.has_key("TD_label")) {
-        _TD_label_ = setup_.fetch_string("TD_label");
+        tpmImpl_->outputBank = setup_.fetch_string("TD_label");
       }
 
       // Cut manager :
@@ -74,16 +95,12 @@ namespace snemo {
                   "Module '" << get_name() << "' has no '" << cut_label << "' service !");
       auto Cut = service_manager_.grab<cuts::cut_service>(cut_label);
 
-      _pid_driver_.reset(new snemo::reconstruction::particle_identification_driver);
-      _pid_driver_->set_cut_manager(Cut.grab_cut_manager());
-
-      // Drivers :
+      // Drivers
+      tpmImpl_->pidDriver.set_cut_manager(Cut.grab_cut_manager());
       datatools::properties PID_config;
       setup_.export_and_rename_starting_with(PID_config, particle_identification_driver::get_id() + ".", "");
-      _pid_driver_->initialize(PID_config);
-
-      _topology_driver_.reset(new snemo::reconstruction::topology_driver);
-      _topology_driver_->initialize(setup_);
+      tpmImpl_->pidDriver.initialize(PID_config);
+      tpmImpl_->topoDriver.initialize(setup_);
 
       _set_initialized(true);
     }
@@ -96,70 +113,37 @@ namespace snemo {
       _set_defaults();
     }
 
-    // Constructor :
-    topology_module::topology_module(datatools::logger::priority logging_priority_)
-      : dpp::base_module(logging_priority_)
-    {
-      _set_defaults();
-    }
-
-    // Destructor :
-    topology_module::~topology_module()
-    {
-      if (is_initialized()) topology_module::reset();
-    }
 
     // Processing :
     dpp::base_module::process_status topology_module::process(datatools::things & data_record_)
     {
-      DT_THROW_IF (! is_initialized(), std::logic_error,
+      // Validate status/input
+      DT_THROW_IF (!this->is_initialized(),
+                   std::logic_error,
                    "Module '" << get_name() << "' is not initialized !");
 
-      // Check particle track data
-      const bool abort_at_missing_input = true;
-      if (! data_record_.has(_PTD_label_)) {
-        DT_THROW_IF(abort_at_missing_input, std::logic_error, "Missing particle track data to be processed !");
-        // leave the data unchanged.
-        return dpp::base_module::PROCESS_ERROR;
-      }
+      DT_THROW_IF(!data_record_.has(tpmImpl_->inputBank),
+                  std::runtime_error,
+                  "Missing particle track data to be processed !");
+
+
       // Grab the 'particle_track_data' entry from the data model :
-      auto the_particle_track_data = data_record_.grab<snemo::datamodel::particle_track_data>(_PTD_label_);
+      auto particleTrackData = data_record_.grab<snemo::datamodel::particle_track_data>(tpmImpl_->inputBank);
 
-      // Prepare process
-      _prepare_process(the_particle_track_data);
+      // Prepare process by running the PID driver
+      tpmImpl_->pidDriver.process(particleTrackData);
 
-      // Check topology data
-      const bool preserve_former_output = false;
-      snemo::datamodel::topology_data * ptr_topology_data = 0;
-      if (! data_record_.has(_TD_label_)) {
-        ptr_topology_data
-          = &(data_record_.add<snemo::datamodel::topology_data>(_TD_label_));
-      } else {
-        ptr_topology_data
-          = &(data_record_.grab<snemo::datamodel::topology_data>(_TD_label_));
-        if (! preserve_former_output) {
-          ptr_topology_data->reset();
-        }
+      // Prepare output bank
+      if (!data_record_.has(tpmImpl_->outputBank)) {
+        data_record_.add<snemo::datamodel::topology_data>(tpmImpl_->outputBank);
       }
-      auto the_topology_data = *ptr_topology_data;
+      auto topologyData = data_record_.grab<snemo::datamodel::topology_data>(tpmImpl_->outputBank);
+      topologyData.reset();
 
-      // Main processing method :
-      _process(the_particle_track_data, the_topology_data);
+      // Main processing method via the topology driver
+      tpmImpl_->topoDriver.process(particleTrackData, topologyData);
 
       return dpp::base_module::PROCESS_SUCCESS;
-    }
-
-    void topology_module::_prepare_process(snemo::datamodel::particle_track_data & ptd_)
-    {
-      // Process the particle identification driver :
-      _pid_driver_.get()->process(ptd_);
-    }
-
-    void topology_module::_process(const snemo::datamodel::particle_track_data & ptd_,
-                                   snemo::datamodel::topology_data & td_ )
-    {
-      // Process the topology driver i.e. TOF, angle meas... :
-      _topology_driver_.get()->process(ptd_,td_);
     }
 
   } // end of namespace reconstruction
