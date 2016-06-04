@@ -63,8 +63,7 @@ namespace snemo {
         oss << "energy_g" << ig;
         DT_THROW_IF(! has_measurement_as<snemo::datamodel::energy_measurement>(oss.str()),
                     std::logic_error, "Missing '" << oss.str() << "' energy measurement !");
-        const snemo::datamodel::energy_measurement & a_energy_meas
-          = get_measurement_as<snemo::datamodel::energy_measurement>(oss.str());
+        auto a_energy_meas = get_measurement_as<snemo::datamodel::energy_measurement>(oss.str());
         g_energies_.push_back(a_energy_meas.get_energy());
       }
     }
@@ -84,8 +83,7 @@ namespace snemo {
           oss << "tof_e" << ie << "_g" << ig;
           DT_THROW_IF(! has_measurement_as<snemo::datamodel::tof_measurement>(oss.str()),
                       std::logic_error, "Missing '" << oss.str() << "' TOF measurement !");
-          const snemo::datamodel::tof_measurement & a_tof_meas
-            = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
+          auto a_tof_meas = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
           eg_pint_.push_back(a_tof_meas.get_internal_probabilities());
         }
       }
@@ -101,8 +99,7 @@ namespace snemo {
           oss << "tof_e" << ie << "_g" << ig;
           DT_THROW_IF(! has_measurement_as<snemo::datamodel::tof_measurement>(oss.str()),
                       std::logic_error, "Missing '" << oss.str() << "' TOF measurement !");
-          const snemo::datamodel::tof_measurement & a_tof_meas
-            = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
+          auto a_tof_meas = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
           eg_pext_.push_back(a_tof_meas.get_external_probabilities());
         }
       }
@@ -126,8 +123,7 @@ namespace snemo {
           oss << "tof_" << e_min << "_g" << ig;
           DT_THROW_IF(! has_measurement_as<snemo::datamodel::tof_measurement>(oss.str()),
                       std::logic_error, "Missing '" << oss.str() << "' TOF measurement !");
-          const snemo::datamodel::tof_measurement & a_tof_meas
-            = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
+          auto a_tof_meas = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
           eg_pint_.push_back(a_tof_meas.get_internal_probabilities());
       }
     }
@@ -142,8 +138,7 @@ namespace snemo {
           oss << "tof_" << e_min << "_g" << ig;
           DT_THROW_IF(! has_measurement_as<snemo::datamodel::tof_measurement>(oss.str()),
                       std::logic_error, "Missing '" << oss.str() << "' TOF measurement !");
-          const snemo::datamodel::tof_measurement & a_tof_meas
-            = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
+          auto a_tof_meas = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
           eg_pext_.push_back(a_tof_meas.get_external_probabilities());
       }
     }
@@ -166,8 +161,7 @@ namespace snemo {
           oss << "tof_" << e_max << "_g" << ig;
           DT_THROW_IF(! has_measurement_as<snemo::datamodel::tof_measurement>(oss.str()),
                       std::logic_error, "Missing '" << oss.str() << "' TOF measurement !");
-          const snemo::datamodel::tof_measurement & a_tof_meas
-            = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
+          auto a_tof_meas = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
           eg_pint_.push_back(a_tof_meas.get_internal_probabilities());
       }
     }
@@ -182,8 +176,7 @@ namespace snemo {
           oss << "tof_" << e_max << "_g" << ig;
           DT_THROW_IF(! has_measurement_as<snemo::datamodel::tof_measurement>(oss.str()),
                       std::logic_error, "Missing '" << oss.str() << "' TOF measurement !");
-          const snemo::datamodel::tof_measurement & a_tof_meas
-            = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
+          auto a_tof_meas = get_measurement_as<snemo::datamodel::tof_measurement>(oss.str());
           eg_pext_.push_back(a_tof_meas.get_external_probabilities());
       }
     }

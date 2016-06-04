@@ -66,12 +66,15 @@ namespace snemo {
         const std::string & a_name = cuts.at(i);
         DT_THROW_IF(! configuration_.has_key(a_name + ".cut_label"), std::logic_error,
                     "Missing associated cut label to '" << a_name << "' cut!");
+
         const std::string a_cut_label = configuration_.fetch_string(a_name + ".cut_label");
         DT_THROW_IF(cut_dict_.find(a_cut_label) == cut_dict_.end(), std::logic_error,
                     "No cut '" << a_cut_label << "' has been registered !");
+
         cuts::cut_handle_type & a_cut_handle = cut_dict_[a_cut_label].grab_initialized_cut_handle();
         DT_THROW_IF(! configuration_.has_key(a_name + ".measurement_label"), std::logic_error,
                     "Missing associated measurement label to '" << a_name << "' cut!");
+
         const std::string a_meas_label = configuration_.fetch_string(a_name + ".measurement_label");
         _cuts_.push_back(std::make_pair(a_meas_label, a_cut_handle));
         DT_LOG_DEBUG(get_logging_priority(),
@@ -90,12 +93,14 @@ namespace snemo {
         DT_LOG_WARNING(get_logging_priority(), "Event record has no '" << _TD_label_ << "' bank !");
         return cuts::SELECTION_INAPPLICABLE;
       }
-      const snemo::datamodel::topology_data & TD = ER.get<snemo::datamodel::topology_data>(_TD_label_);
+
+      auto TD = ER.get<snemo::datamodel::topology_data>(_TD_label_);
       if (! TD.has_pattern()) {
         DT_LOG_DEBUG(get_logging_priority(), "Missing topology pattern !");
         return cuts::SELECTION_INAPPLICABLE;
       }
-      const snemo::datamodel::base_topology_pattern & a_pattern = TD.get_pattern();
+
+      auto& a_pattern = TD.get_pattern();
 
       // Loop over cuts
       for (auto& icut : _cuts_) {

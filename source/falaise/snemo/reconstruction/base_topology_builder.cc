@@ -59,12 +59,12 @@ namespace snemo {
       size_t n_positrons = 0;
       size_t n_alphas    = 0;
       size_t n_gammas    = 0;
-      const snemo::datamodel::particle_track_data::particle_collection_type & the_particles
-        = ptd_.get_particles();
-      for (snemo::datamodel::particle_track_data::particle_collection_type::const_iterator
-             i_particle = the_particles.begin();
-           i_particle != the_particles.end(); ++i_particle) {
-        const snemo::datamodel::particle_track & a_particle = i_particle->get();
+      auto the_particles = ptd_.get_particles();
+
+      for (auto& i_particle : the_particles) {
+        // This is a handle/shared pointer, why the **** are you grabing the internals?
+        // This completely destroys the point of smart pointers.
+        auto a_particle = i_particle.get();
         std::ostringstream key;
         if (snemo::datamodel::pid_utils::particle_is_electron(a_particle)) {
           key << "e" << ++n_electrons;
@@ -81,7 +81,7 @@ namespace snemo {
         else {
           continue; // no undefined particles for now
         }
-        tracks_[key.str()] = *i_particle;
+        tracks_[key.str()] = i_particle;
       }
     }
 

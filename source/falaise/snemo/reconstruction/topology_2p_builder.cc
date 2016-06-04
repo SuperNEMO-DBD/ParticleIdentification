@@ -33,16 +33,15 @@ namespace snemo {
       const std::string p1_label = "p1";
       DT_THROW_IF(! pattern_.has_particle_track(p1_label), std::logic_error,
                   "No particle with label '" << p1_label << "' has been stored !");
-      const snemo::datamodel::particle_track & p1 = pattern_.get_particle_track(p1_label);
+      auto p1 = pattern_.get_particle_track(p1_label);
 
       const std::string p2_label = "p2";
       DT_THROW_IF(! pattern_.has_particle_track(p2_label), std::logic_error,
                   "No particle with label '" << p2_label << "' has been stored !");
-      const snemo::datamodel::particle_track & p2 = pattern_.get_particle_track(p2_label);
+      auto p2 = pattern_.get_particle_track(p2_label);
 
       auto meas = pattern_.get_measurement_dictionary();
-      const snemo::reconstruction::measurement_drivers & drivers
-        = base_topology_builder::get_measurement_drivers();
+      auto& drivers = base_topology_builder::get_measurement_drivers();
       {
         snemo::datamodel::tof_measurement * ptr_tof = new snemo::datamodel::tof_measurement;
         meas["tof_" + p1_label + "_" + p2_label].reset(ptr_tof);

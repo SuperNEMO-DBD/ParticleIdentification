@@ -104,8 +104,6 @@ namespace snemo {
                                       const snemo::datamodel::particle_track & pt2_,
                                       snemo::datamodel::vertex_measurement & vertex_)
     {
-      DT_LOG_TRACE(get_logging_priority(), "Entering...");
-
       if (snemo::datamodel::pid_utils::particle_is_gamma(pt1_) ||
           snemo::datamodel::pid_utils::particle_is_gamma(pt2_)) {
         DT_LOG_WARNING(get_logging_priority(),
@@ -113,18 +111,13 @@ namespace snemo {
         return;
       }
 
-      const snemo::datamodel::particle_track::vertex_collection_type & the_vertices_1
-        = pt1_.get_vertices();
-      const snemo::datamodel::particle_track::vertex_collection_type & the_vertices_2
-        = pt2_.get_vertices();
-      for (snemo::datamodel::particle_track::vertex_collection_type::const_iterator
-             ivtx1 = the_vertices_1.begin();
-           ivtx1 != the_vertices_1.end(); ++ivtx1) {
-        for (snemo::datamodel::particle_track::vertex_collection_type::const_iterator
-               ivtx2 = the_vertices_2.begin();
-             ivtx2 != the_vertices_2.end(); ++ivtx2) {
-          const geomtools::blur_spot & vtx1 = ivtx1->get();
-          const geomtools::blur_spot & vtx2 = ivtx2->get();
+      auto the_vertices_1 = pt1_.get_vertices();
+      auto the_vertices_2 = pt2_.get_vertices();
+
+      for (auto& ivtx1 : the_vertices_1) {
+        for (auto& ivtx2 : the_vertices_2) {
+          auto vtx1 = ivtx1.get();
+          auto vtx2 = ivtx2.get();
 
           auto have_same_origin = [] (const geomtools::blur_spot & vtx1_,
                                       const geomtools::blur_spot & vtx2_) -> bool
@@ -156,9 +149,6 @@ namespace snemo {
           _find_common_vertex(vtx1, vtx2, vertex_);
         }
       }
-
-      DT_LOG_TRACE(get_logging_priority(), "Exiting...");
-
     }
 
     void vertex_driver::_find_common_vertex(const geomtools::blur_spot & vtx1_,

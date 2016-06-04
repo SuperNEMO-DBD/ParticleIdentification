@@ -61,8 +61,7 @@ namespace snemo {
     {
       double energy = datatools::invalid_real();
       if (particle_.has_associated_calorimeter_hits()) {
-        const snemo::datamodel::calibrated_calorimeter_hit::collection_type &
-          the_calorimeters = particle_.get_associated_calorimeter_hits();
+        auto the_calorimeters = particle_.get_associated_calorimeter_hits();
         // Get first associated calorimeter (charged particle can be associated to
         // several calorimeter hits given the spatial resolution of the track fit:
         // only take care of teh first one)
@@ -89,10 +88,8 @@ namespace snemo {
       datatools::invalidate(t_);
       datatools::invalidate(sigma_t_);
       if (particle_.has_associated_calorimeter_hits()) {
-        const snemo::datamodel::calibrated_calorimeter_hit::collection_type &
-          the_calorimeters = particle_.get_associated_calorimeter_hits();
-        const snemo::datamodel::calibrated_calorimeter_hit & a_calo_hit
-          = the_calorimeters.front().get();
+        auto the_calorimeters = particle_.get_associated_calorimeter_hits();
+        auto a_calo_hit = the_calorimeters.front().get();
         t_ = a_calo_hit.get_time();
         sigma_t_ = a_calo_hit.get_sigma_time();
       } else {
@@ -121,8 +118,8 @@ namespace snemo {
     {
       double length = datatools::invalid_real();
       if (particle_.has_trajectory()) {
-        const snemo::datamodel::tracker_trajectory & a_trajectory = particle_.get_trajectory();
-        const snemo::datamodel::base_trajectory_pattern & a_track_pattern = a_trajectory.get_pattern();
+        auto a_trajectory = particle_.get_trajectory();
+        auto& a_track_pattern = a_trajectory.get_pattern();
         length = a_track_pattern.get_shape().get_length();
       } else {
         DT_LOG_WARNING(logging, "Particle has no attached trajectory !");
@@ -139,12 +136,12 @@ namespace snemo {
         DT_LOG_WARNING(logging, "Electron has no vertices associated !");
         return length;
       }
-      const snemo::datamodel::particle_track::vertex_collection_type & the_vertices = pte_.get_vertices();
+
+      auto the_vertices = pte_.get_vertices();
       geomtools::vector_3d electron_foil_vertex;
       geomtools::invalidate(electron_foil_vertex);
-      for (snemo::datamodel::particle_track::vertex_collection_type::const_iterator
-             ivtx = the_vertices.begin(); ivtx < the_vertices.end(); ++ivtx) {
-        const geomtools::blur_spot & a_vertex = ivtx->get();
+      for (auto& ivtx : the_vertices) {
+        auto a_vertex = ivtx.get();
         if (! snemo::datamodel::particle_track::vertex_is_on_source_foil(a_vertex))
           continue;
 
@@ -160,12 +157,11 @@ namespace snemo {
         DT_LOG_WARNING(logging, "Gamma has no vertices associated !");
         return length;
       }
-      const snemo::datamodel::particle_track::vertex_collection_type & the_gamma_vertices = ptg_.get_vertices();
+      auto the_gamma_vertices = ptg_.get_vertices();
       geomtools::vector_3d gamma_first_calo_vertex;
       geomtools::invalidate(gamma_first_calo_vertex);
-      for (snemo::datamodel::particle_track::vertex_collection_type::const_iterator
-             ivtx = the_gamma_vertices.begin(); ivtx < the_gamma_vertices.end(); ++ivtx) {
-        const geomtools::blur_spot & a_vertex = ivtx->get();
+      for (auto ivtx : the_gamma_vertices) {
+        auto a_vertex = ivtx.get();
         if (snemo::datamodel::particle_track::vertex_is_on_main_calorimeter(a_vertex) ||
             snemo::datamodel::particle_track::vertex_is_on_x_calorimeter(a_vertex) ||
             snemo::datamodel::particle_track::vertex_is_on_gamma_veto(a_vertex)) {
@@ -335,10 +331,8 @@ namespace snemo {
                                                       std::vector<double> & proba_int_,
                                                       std::vector<double> & proba_ext_)
     {
-      const snemo::datamodel::particle_track & a_gamma
-        = (snemo::datamodel::pid_utils::particle_is_gamma(pt1_) ? pt1_ : pt2_);
-      const snemo::datamodel::particle_track & a_charged
-        = (snemo::datamodel::pid_utils::particle_is_gamma(pt1_) ? pt2_ : pt1_);
+      auto a_gamma = (snemo::datamodel::pid_utils::particle_is_gamma(pt1_) ? pt1_ : pt2_);
+      auto a_charged = (snemo::datamodel::pid_utils::particle_is_gamma(pt1_) ? pt2_ : pt1_);
 
       // Compute theoretical times given energy, mass and track length
       const double E1 = tof_tool::get_energy(a_charged);
@@ -358,11 +352,9 @@ namespace snemo {
                              snemo::datamodel::particle_track::VERTEX_ON_X_CALORIMETER    |
                              snemo::datamodel::particle_track::VERTEX_ON_GAMMA_VETO);
 
-      for (snemo::datamodel::particle_track::vertex_collection_type::iterator
-             ivtx = the_gamma_calos_vertices.begin();
-           ivtx != the_gamma_calos_vertices.end(); ++ivtx) {
+      for (auto ivtx : the_gamma_calos_vertices) {
         double tl2, t2, sigma_t2;
-        this->_get_vertex_to_calo_info_(a_charged, a_gamma, ivtx->get(),
+        this->_get_vertex_to_calo_info_(a_charged, a_gamma, ivtx.get(),
                                         tl2, t2, sigma_t2);
 
         const double t2_th = tof_tool::get_theoretical_time(E2, m2, tl2);
@@ -393,12 +385,11 @@ namespace snemo {
         DT_LOG_WARNING(get_logging_priority(), "Electron has no vertices associated !");
         return;
       }
-      const snemo::datamodel::particle_track::vertex_collection_type & the_vertices = ptc_.get_vertices();
+      auto the_vertices = ptc_.get_vertices();
       geomtools::vector_3d electron_foil_vertex;
       geomtools::invalidate(electron_foil_vertex);
-      for (snemo::datamodel::particle_track::vertex_collection_type::const_iterator
-             ivtx = the_vertices.begin(); ivtx < the_vertices.end(); ++ivtx) {
-        const geomtools::blur_spot & a_vertex = ivtx->get();
+      for (auto ivtx : the_vertices) {
+        auto a_vertex = ivtx.get();
         if (! snemo::datamodel::particle_track::vertex_is_on_source_foil(a_vertex))
           continue;
 
@@ -410,8 +401,7 @@ namespace snemo {
         return;
       }
 
-      const snemo::datamodel::calibrated_calorimeter_hit::collection_type &
-        the_gamma_calorimeters = ptg_.get_associated_calorimeter_hits();
+      auto the_gamma_calorimeters = ptg_.get_associated_calorimeter_hits();
       geomtools::base_hit::has_geom_id_predicate hit_pred(vertex_.get_geom_id());
       datatools::mother_to_daughter_predicate<geomtools::base_hit,
                                               snemo::datamodel::calibrated_calorimeter_hit> pred_M2D(hit_pred);
@@ -423,7 +413,7 @@ namespace snemo {
                        << " can not be found ! Might be a gamma from annihilation.");
         return;
       }
-      const snemo::datamodel::calibrated_calorimeter_hit & a_calo_hit = found->get();
+      auto a_calo_hit = found->get();
 
       track_length_ = (electron_foil_vertex - vertex_.get_position()).mag();
       time_ = a_calo_hit.get_time();

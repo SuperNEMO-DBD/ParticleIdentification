@@ -190,21 +190,19 @@ namespace snemo {
       typedef std::map<std::string, size_t> particle_counter_type;
       particle_counter_type particle_counter;
 
-      snemo::datamodel::particle_track_data::particle_collection_type & particles
-        = ptd_.grab_particles();
-      for (snemo::datamodel::particle_track_data::particle_collection_type::iterator
-             it = particles.begin(); it != particles.end(); ++it) {
-        snemo::datamodel::particle_track & a_particle = it->grab();
+      auto particles = ptd_.grab_particles();
+
+      for (auto& it : particles) {
+        auto a_particle = it.grab();
 
         bool particle_is_undefined = true;
-        for (property_dict_type::const_iterator ip = _pid_properties_.begin();
-             ip != _pid_properties_.end(); ++ip) {
-          const std::string & cut_name = ip->first;
+        for (auto& ip : _pid_properties_) {
+          const std::string & cut_name = ip.first;
           DT_LOG_DEBUG(get_logging_priority(), "Applying '" << cut_name << "' selection...");
 
-          cuts::cut_manager & cut_mgr = grab_cut_manager();
+          auto cut_mgr = grab_cut_manager();
           DT_THROW_IF(! cut_mgr.has(cut_name), std::logic_error, "Cut '" << cut_name << "' is missing !");
-          cuts::i_cut & a_cut = cut_mgr.grab(cut_name);
+          auto& a_cut = cut_mgr.grab(cut_name);
           a_cut.set_user_data(a_particle);
           const int cut_status = a_cut.process();
           a_cut.reset_user_data();
@@ -215,8 +213,8 @@ namespace snemo {
             continue;
           }
 
-          datatools::properties & aux = a_particle.grab_auxiliaries();
-          const pair_property_type & ppt = ip->second;
+          auto& aux = a_particle.grab_auxiliaries();
+          const pair_property_type & ppt = ip.second;
           const std::string & key = ppt.first;
           std::string value = ppt.second;
           if (is_mode_pid_label()) {
@@ -237,18 +235,17 @@ namespace snemo {
         }
 
         if (is_mode_pid_label() && particle_is_undefined) {
-          datatools::properties & aux = a_particle.grab_auxiliaries();
+          auto& aux = a_particle.grab_auxiliaries();
           aux.update(snemo::datamodel::pid_utils::pid_label_key(),
                      snemo::datamodel::pid_utils::undefined_label());
           particle_counter[snemo::datamodel::pid_utils::undefined_label()]++;
         }
       }
 
-      for (particle_counter_type::const_iterator i = particle_counter.begin();
-           i != particle_counter.end(); ++i) {
-        DT_LOG_DEBUG(get_logging_priority(), "Number of '" << i->first << "' particles : "
-                     << i->second);
-        ptd_.grab_auxiliaries().update_integer(i->first, i->second);
+      for (auto& i: particle_counter) {
+        DT_LOG_DEBUG(get_logging_priority(), "Number of '" << i.first << "' particles : "
+                     << i.second);
+        ptd_.grab_auxiliaries().update_integer(i.first, i.second);
       }
 
       DT_LOG_TRACE(get_logging_priority(), "Exiting.");

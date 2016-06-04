@@ -49,11 +49,9 @@ namespace snemo {
         const std::string g_label = oss.str();
         DT_THROW_IF(! pattern_.has_particle_track(g_label), std::logic_error,
                     "No particle with label '" << g_label << "' has been stored !");
-        const snemo::datamodel::particle_track & gamma = pattern_.get_particle_track(g_label);
-        snemo::datamodel::base_topology_pattern::measurement_dict_type & meas
-          = pattern_.get_measurement_dictionary();
-        const snemo::reconstruction::measurement_drivers & drivers
-          = base_topology_builder::get_measurement_drivers();
+        auto gamma = pattern_.get_particle_track(g_label);
+        auto meas = pattern_.get_measurement_dictionary();
+        auto& drivers = base_topology_builder::get_measurement_drivers();
         {
           snemo::datamodel::tof_measurement * ptr_tof = new snemo::datamodel::tof_measurement;
           meas["tof_e1_" + g_label].reset(ptr_tof);

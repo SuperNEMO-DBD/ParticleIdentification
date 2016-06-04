@@ -72,8 +72,7 @@ namespace snemo {
                   ! service_manager_.is_a<cuts::cut_service>(cut_label),
                   std::logic_error,
                   "Module '" << get_name() << "' has no '" << cut_label << "' service !");
-      cuts::cut_service & Cut
-        = service_manager_.grab<cuts::cut_service>(cut_label);
+      auto Cut = service_manager_.grab<cuts::cut_service>(cut_label);
 
       _pid_driver_.reset(new snemo::reconstruction::particle_identification_driver);
       _pid_driver_->set_cut_manager(Cut.grab_cut_manager());
@@ -124,8 +123,7 @@ namespace snemo {
         return dpp::base_module::PROCESS_ERROR;
       }
       // Grab the 'particle_track_data' entry from the data model :
-      snemo::datamodel::particle_track_data & the_particle_track_data
-        = data_record_.grab<snemo::datamodel::particle_track_data>(_PTD_label_);
+      auto the_particle_track_data = data_record_.grab<snemo::datamodel::particle_track_data>(_PTD_label_);
 
       // Prepare process
       _prepare_process(the_particle_track_data);
@@ -143,7 +141,7 @@ namespace snemo {
           ptr_topology_data->reset();
         }
       }
-      snemo::datamodel::topology_data & the_topology_data = *ptr_topology_data;
+      auto the_topology_data = *ptr_topology_data;
 
       // Main processing method :
       _process(the_particle_track_data, the_topology_data);

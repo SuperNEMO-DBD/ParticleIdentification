@@ -98,11 +98,9 @@ namespace snemo {
       datatools::invalidate(energy_);
 
       if (pt_.has_associated_calorimeter_hits()) {
-        const snemo::datamodel::calibrated_calorimeter_hit::collection_type &
-          the_calos = pt_.get_associated_calorimeter_hits();
-        for (snemo::datamodel::calibrated_calorimeter_hit::collection_type::const_iterator
-               icalo = the_calos.begin(); icalo != the_calos.end(); ++icalo) {
-          const snemo::datamodel::calibrated_calorimeter_hit & a_calo = icalo->get();
+        auto the_calos = pt_.get_associated_calorimeter_hits();
+        for (auto icalo = the_calos.begin(); icalo != the_calos.end(); ++icalo) {
+          auto a_calo = icalo->get();
           icalo == the_calos.begin() ? energy_ = a_calo.get_energy() : energy_ += a_calo.get_energy();
         }
       } else {

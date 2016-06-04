@@ -218,17 +218,17 @@ namespace snemo {
       uint32_t cut_returned = cuts::SELECTION_INAPPLICABLE;
 
       // Get tof measurement
-      const snemo::datamodel::tof_measurement * ptr_meas = 0;
+      const snemo::datamodel::tof_measurement * ptr_meas = nullptr;
+
       if (is_user_data<snemo::datamodel::tof_measurement>()) {
         ptr_meas = &(get_user_data<snemo::datamodel::tof_measurement>());
       } else if (is_user_data<snemo::datamodel::base_topology_measurement>()) {
-        const snemo::datamodel::base_topology_measurement & btm
-          = get_user_data<snemo::datamodel::base_topology_measurement>();
+        auto btm = get_user_data<snemo::datamodel::base_topology_measurement>();
         ptr_meas = dynamic_cast<const snemo::datamodel::tof_measurement *>(&btm);
       } else {
         DT_THROW_IF(true, std::logic_error, "Invalid data type !");
       }
-      const snemo::datamodel::tof_measurement & a_tof_meas = *ptr_meas;
+     auto a_tof_meas = *ptr_meas;
 
       // Check if measurement has internal probability
       bool check_has_internal_probability = true;
@@ -245,15 +245,14 @@ namespace snemo {
           DT_LOG_DEBUG(get_logging_priority(), "Missing internal probability !");
           return cuts::SELECTION_INAPPLICABLE;
         }
-        const snemo::datamodel::tof_measurement::probability_type & pints
-          = a_tof_meas.get_internal_probabilities();
-        for (snemo::datamodel::tof_measurement::probability_type::const_iterator
-               ip = pints.begin(); ip != pints.end(); ++ip) {
-          const double pint = *ip;
+
+        auto pints = a_tof_meas.get_internal_probabilities();
+
+        for (auto& ip : pints) {
           if (datatools::is_valid(_int_prob_range_min_)) {
-            if (pint < _int_prob_range_min_) {
+            if (ip < _int_prob_range_min_) {
               DT_LOG_DEBUG(get_logging_priority(),
-                           "Internal probability (" << pint/CLHEP::perCent << "%) lower than "
+                           "Internal probability (" << ip/CLHEP::perCent << "%) lower than "
                            << _int_prob_range_min_/CLHEP::perCent << "%");
               check_range_internal_probability = false;
               if (_int_prob_range_mode_ == MODE_RANGE_STRICT) {
@@ -262,13 +261,12 @@ namespace snemo {
             }
           }
         }
-        for (snemo::datamodel::tof_measurement::probability_type::const_iterator
-               ip = pints.begin(); ip != pints.end(); ++ip) {
-          const double pint = *ip;
+
+        for (auto& ip : pints) {
           if (datatools::is_valid(_int_prob_range_max_)) {
-            if (pint > _int_prob_range_max_) {
+            if (ip > _int_prob_range_max_) {
               DT_LOG_DEBUG(get_logging_priority(),
-                           "Internal probability (" << pint/CLHEP::perCent << "%) greater than "
+                           "Internal probability (" << ip/CLHEP::perCent << "%) greater than "
                            << _int_prob_range_max_/CLHEP::perCent << "%");
               check_range_internal_probability = false;
               if (_int_prob_range_mode_ == MODE_RANGE_STRICT) {
@@ -294,15 +292,13 @@ namespace snemo {
           DT_LOG_DEBUG(get_logging_priority(), "Missing external probability !");
           return cuts::SELECTION_INAPPLICABLE;
         }
-        const snemo::datamodel::tof_measurement::probability_type & pexts
-          = a_tof_meas.get_external_probabilities();
-        for (snemo::datamodel::tof_measurement::probability_type::const_iterator
-               ip = pexts.begin(); ip != pexts.end(); ++ip) {
-          const double pext = *ip;
+
+        auto pexts = a_tof_meas.get_external_probabilities();
+        for (auto& ip : pexts) {
           if (datatools::is_valid(_ext_prob_range_min_)) {
-            if (pext < _ext_prob_range_min_) {
+            if (ip < _ext_prob_range_min_) {
               DT_LOG_DEBUG(get_logging_priority(),
-                           "External probability (" << pext/CLHEP::perCent << "%) lower than "
+                           "External probability (" << ip/CLHEP::perCent << "%) lower than "
                            << _ext_prob_range_min_/CLHEP::perCent << "%");
               check_range_external_probability = false;
               if (_ext_prob_range_mode_ == MODE_RANGE_STRICT) {
@@ -311,13 +307,12 @@ namespace snemo {
             }
           }
         }
-        for (snemo::datamodel::tof_measurement::probability_type::const_iterator
-               ip = pexts.begin(); ip != pexts.end(); ++ip) {
-          const double pext = *ip;
+
+        for (auto& ip : pexts) {
           if (datatools::is_valid(_ext_prob_range_max_)) {
-            if (pext > _ext_prob_range_max_) {
+            if (ip > _ext_prob_range_max_) {
               DT_LOG_DEBUG(get_logging_priority(),
-                           "External probability (" << pext/CLHEP::perCent << "%) greater than "
+                           "External probability (" << ip/CLHEP::perCent << "%) greater than "
                            << _ext_prob_range_max_/CLHEP::perCent << "%");
               check_range_external_probability = false;
               if (_ext_prob_range_mode_ == MODE_RANGE_STRICT) {

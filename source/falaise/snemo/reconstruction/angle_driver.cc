@@ -159,15 +159,14 @@ namespace snemo {
       geomtools::invalidate(direction_);
 
       // Get foil vertices from particle tracks
-      const snemo::datamodel::particle_track::vertex_collection_type & the_vertices = pt_.get_vertices();
+      auto the_vertices = pt_.get_vertices();
       geomtools::vector_3d foil_vertex;
       geomtools::invalidate(foil_vertex);
-      for (snemo::datamodel::particle_track::vertex_collection_type::const_iterator
-             i_vtx = the_vertices.begin(); i_vtx != the_vertices.end(); ++i_vtx) {
-        if (! snemo::datamodel::particle_track::vertex_is_on_source_foil(i_vtx->get()))
+      for (auto& i_vtx : the_vertices) {
+        if (! snemo::datamodel::particle_track::vertex_is_on_source_foil(i_vtx.get()))
           continue;
 
-        foil_vertex = i_vtx->get().get_position();
+        foil_vertex = i_vtx.get().get_position();
         break;
       }
       if (! geomtools::is_valid(foil_vertex)) {
@@ -179,19 +178,18 @@ namespace snemo {
       if (snemo::datamodel::pid_utils::particle_is_gamma(pt_)) {
         DT_LOG_TRACE(get_logging_priority(), "Particle track is a gamma !");
         // Get the first vertex on calorimeter (should be the first associated calorimeter)
-        for (snemo::datamodel::particle_track::vertex_collection_type::const_iterator
-               i_vtx = the_vertices.begin(); i_vtx != the_vertices.end(); ++i_vtx) {
-          if (snemo::datamodel::particle_track::vertex_is_on_main_calorimeter(i_vtx->get()) ||
-              snemo::datamodel::particle_track::vertex_is_on_x_calorimeter(i_vtx->get())    ||
-              snemo::datamodel::particle_track::vertex_is_on_gamma_veto(i_vtx->get())) {
-            const geomtools::vector_3d & calo_vertex = i_vtx->get().get_position();
+        for (auto& i_vtx : the_vertices) {
+          if (snemo::datamodel::particle_track::vertex_is_on_main_calorimeter(i_vtx.get()) ||
+              snemo::datamodel::particle_track::vertex_is_on_x_calorimeter(i_vtx.get())    ||
+              snemo::datamodel::particle_track::vertex_is_on_gamma_veto(i_vtx.get())) {
+            const geomtools::vector_3d & calo_vertex = i_vtx.get().get_position();
             direction_ = calo_vertex - foil_vertex;
             break;
           }
         }
       } else if (pt_.has_trajectory()) {
-        const snemo::datamodel::tracker_trajectory & a_trajectory = pt_.get_trajectory();
-        const snemo::datamodel::base_trajectory_pattern & a_track_pattern = a_trajectory.get_pattern();
+        auto a_trajectory = pt_.get_trajectory();
+        auto& a_track_pattern = a_trajectory.get_pattern();
         direction_ = a_track_pattern.get_shape().get_direction_on_curve(foil_vertex);
       } else {
         DT_LOG_WARNING(get_logging_priority(), "Particle track has no tracker trajectory associated !");

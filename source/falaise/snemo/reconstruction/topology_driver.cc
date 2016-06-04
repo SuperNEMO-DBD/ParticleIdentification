@@ -90,10 +90,9 @@ namespace snemo {
         driver_names.push_back(snemo::reconstruction::angle_driver::get_id());
         driver_names.push_back(snemo::reconstruction::energy_driver::get_id());
       }
-      for (std::vector<std::string>::const_iterator
-             idriver = driver_names.begin();
-           idriver != driver_names.end(); ++idriver) {
-        const std::string & a_driver_name = *idriver;
+      
+      for (auto& i_driver : driver_names) {
+        auto a_driver_name = i_driver;
 
         if (a_driver_name == snemo::reconstruction::tof_driver::get_id()) {
           // Initialize TOF Driver

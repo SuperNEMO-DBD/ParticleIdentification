@@ -284,17 +284,16 @@ namespace snemo {
       uint32_t cut_returned = cuts::SELECTION_INAPPLICABLE;
 
       // Get vertices measurement
-      const snemo::datamodel::vertex_measurement * ptr_meas = 0;
+      const snemo::datamodel::vertex_measurement * ptr_meas = nullptr;
       if (is_user_data<snemo::datamodel::vertex_measurement>()) {
         ptr_meas = &(get_user_data<snemo::datamodel::vertex_measurement>());
       } else if (is_user_data<snemo::datamodel::base_topology_measurement>()) {
-        const snemo::datamodel::base_topology_measurement & btm
-          = get_user_data<snemo::datamodel::base_topology_measurement>();
+        auto btm = get_user_data<snemo::datamodel::base_topology_measurement>();
         ptr_meas = dynamic_cast<const snemo::datamodel::vertex_measurement *>(&btm);
       } else {
         DT_THROW_IF(true, std::logic_error, "Invalid data type !");
       }
-      const snemo::datamodel::vertex_measurement & a_vertices_meas = *ptr_meas;
+      auto a_vertices_meas = *ptr_meas;
 
       // Check if measurement has vertices probability
       bool check_has_vertices_probability = true;

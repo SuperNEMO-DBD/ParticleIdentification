@@ -32,12 +32,12 @@ namespace snemo {
       const std::string e1_label = "e1";
       DT_THROW_IF(! pattern_.has_particle_track(e1_label), std::logic_error,
                   "No particle with label '" << e1_label << "' has been stored !");
-      const snemo::datamodel::particle_track & e1 = pattern_.get_particle_track(e1_label);
+      auto e1 = pattern_.get_particle_track(e1_label);
 
       const std::string e2_label = "e2";
       DT_THROW_IF(! pattern_.has_particle_track(e2_label), std::logic_error,
                   "No particle with label '" << e2_label << "' has been stored !");
-      const snemo::datamodel::particle_track & e2 = pattern_.get_particle_track(e2_label);
+      auto e2 = pattern_.get_particle_track(e2_label);
 
       const int ngammas = pattern_.get_particle_track_dictionary().size()-2;
       dynamic_cast<snemo::datamodel::topology_2eNg_pattern &>(pattern_).set_number_of_gammas(ngammas);
@@ -51,8 +51,7 @@ namespace snemo {
                     "No particle with label '" << g_label << "' has been stored !");
         const snemo::datamodel::particle_track & gamma = pattern_.get_particle_track(g_label);
         auto meas = pattern_.get_measurement_dictionary();
-        const snemo::reconstruction::measurement_drivers & drivers
-          = base_topology_builder::get_measurement_drivers();
+        auto& drivers = base_topology_builder::get_measurement_drivers();
         {
           snemo::datamodel::tof_measurement * ptr_tof = new snemo::datamodel::tof_measurement;
           meas["tof_e1_" + g_label].reset(ptr_tof);

@@ -93,12 +93,9 @@ namespace snemo {
           out_ << _tracks_.size();
         }
         out_ << std::endl;
-        for (snemo::datamodel::base_topology_pattern::particle_track_dict_type::const_iterator
-               i = _tracks_.begin(); i != _tracks_.end(); ++i) {
-          const std::string & a_name = i->first;
-          const snemo::datamodel::particle_track & a_track = i->second.get();
+        for (auto i = _tracks_.begin(); i != _tracks_.end(); ++i) {
           out_ << indent << datatools::i_tree_dumpable::skip_tag;
-          snemo::datamodel::base_topology_pattern::particle_track_dict_type::const_iterator j = i;
+          auto j = i;
           std::ostringstream indent2;
           indent2 << indent << datatools::i_tree_dumpable::skip_tag;
           if (++j == _tracks_.end()) {
@@ -108,8 +105,8 @@ namespace snemo {
             out_ << datatools::i_tree_dumpable::tag;
             indent2 << datatools::i_tree_dumpable::skip_tag;
           }
-          out_ << "Particle '" << a_name << "' :" << std::endl;
-          a_track.tree_dump(out_, "", indent2.str());
+          out_ << "Particle '" << i->first << "' :" << std::endl;
+          i->second.get().tree_dump(out_, "", indent2.str());
         }
       }
 
@@ -122,12 +119,11 @@ namespace snemo {
           out_ << _meas_.size();
         }
         out_ << std::endl;
-        for (snemo::datamodel::base_topology_pattern::measurement_dict_type::const_iterator
-               i = _meas_.begin(); i != _meas_.end(); ++i) {
-          const std::string & a_name = i->first;
-          const snemo::datamodel::base_topology_measurement & a_meas = i->second.get();
+        for (auto i = _meas_.begin(); i != _meas_.end(); ++i) {
+          auto a_name = i->first;
+          auto a_meas = i->second.get();
           out_ << indent << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
-          snemo::datamodel::base_topology_pattern::measurement_dict_type::const_iterator j = i;
+          auto j = i;
           std::ostringstream indent2;
           indent2 << indent << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
           if (++j == _meas_.end()) {

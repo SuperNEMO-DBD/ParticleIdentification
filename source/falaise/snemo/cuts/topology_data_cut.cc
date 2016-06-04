@@ -117,14 +117,14 @@ namespace snemo {
       uint32_t cut_returned = cuts::SELECTION_INAPPLICABLE;
 
       // Get event record
-      const datatools::things & ER = get_user_data<datatools::things>();
+      auto& ER = get_user_data<datatools::things>();
 
       if (! ER.has(_TD_label_)) {
         DT_LOG_WARNING(get_logging_priority(), "Event record has no '" << _TD_label_ << "' bank !");
         return cut_returned;
       }
 
-      const snemo::datamodel::topology_data & TD = ER.get<snemo::datamodel::topology_data>(_TD_label_);
+     auto TD = ER.get<snemo::datamodel::topology_data>(_TD_label_);
 
       // Check if event has pattern
       bool check_has_pattern = true;
@@ -137,7 +137,7 @@ namespace snemo {
       bool check_has_classification = true;
       if (is_mode_has_classification()) {
         DT_LOG_DEBUG(get_logging_priority(), "Running HAS_CLASSIFICATION mode...");
-        const datatools::properties & td_aux = TD.get_auxiliaries();
+        auto td_aux = TD.get_auxiliaries();
         if (! td_aux.has_key(snemo::datamodel::pid_utils::classification_label_key()))
           check_has_classification = false;
       }
@@ -146,7 +146,7 @@ namespace snemo {
       bool check_classification = true;
       if (is_mode_classification()) {
         DT_LOG_DEBUG(get_logging_priority(), "Running CLASSIFICATION mode...");
-        const datatools::properties & td_aux = TD.get_auxiliaries();
+        auto td_aux = TD.get_auxiliaries();
         if (! td_aux.has_key(snemo::datamodel::pid_utils::classification_label_key())) {
           DT_LOG_DEBUG(get_logging_priority(), "The event does not have associated classification !");
           return cuts::SELECTION_INAPPLICABLE;
@@ -164,22 +164,21 @@ namespace snemo {
       if (is_mode_no_pile_up()) {
         DT_LOG_DEBUG(get_logging_priority(), "Running NO_PILE_UP mode...");
         std::set<geomtools::geom_id> gids;
-        const snemo::datamodel::base_topology_pattern::particle_track_dict_type a_particle_track_dict =
-          TD.get_pattern_handle().get().get_particle_track_dictionary();
-        for(snemo::datamodel::base_topology_pattern::particle_track_dict_type::const_iterator it = a_particle_track_dict.begin(); it != a_particle_track_dict.end(); ++it) {
-          if (! (std::regex_match(it->first, std::regex("e[0-9]")) ||
-                 std::regex_match(it->first, std::regex("p[0-9]"))))
+        auto a_particle_track_dict = TD.get_pattern_handle().get().get_particle_track_dictionary();
+
+        for (auto& it : a_particle_track_dict) {
+          if (! (std::regex_match(it.first, std::regex("e[0-9]")) ||
+                 std::regex_match(it.first, std::regex("p[0-9]"))))
             continue;
 
-          const snemo::datamodel::particle_track & a_particle = it->second.get();
+          auto& a_particle = it.second.get();
           if (! a_particle.has_associated_calorimeter_hits()) {
             DT_LOG_DEBUG(get_logging_priority(),
                          "Particle track is not associated to any calorimeter block !");
             continue;
           }
 
-          const snemo::datamodel::calibrated_calorimeter_hit::collection_type &
-            the_calorimeters = a_particle.get_associated_calorimeter_hits ();
+          auto the_calorimeters = a_particle.get_associated_calorimeter_hits ();
 
           if (the_calorimeters.size() > 2) {
             DT_LOG_WARNING(get_logging_priority(),
@@ -188,7 +187,7 @@ namespace snemo {
           }
 
           for (size_t i = 0; i < the_calorimeters.size(); ++i) {
-            const geomtools::geom_id & gid = the_calorimeters.at(i).get().get_geom_id();
+            auto gid = the_calorimeters.at(i).get().get_geom_id();
             if (gids.find(gid) != gids.end()) {
               check_no_pile_up = false;
             }

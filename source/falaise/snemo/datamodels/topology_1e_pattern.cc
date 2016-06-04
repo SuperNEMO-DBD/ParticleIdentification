@@ -71,10 +71,10 @@ namespace snemo {
     {
       double length = datatools::invalid_real();
       if (has_electron_track()) {
-        const snemo::datamodel::particle_track & the_electron = get_electron_track();
+        auto the_electron = get_electron_track();
         if (the_electron.has_trajectory()) {
-          const snemo::datamodel::tracker_trajectory & a_trajectory = the_electron.get_trajectory();
-          const snemo::datamodel::base_trajectory_pattern & a_track_pattern = a_trajectory.get_pattern();
+          auto a_trajectory = the_electron.get_trajectory();
+          auto& a_track_pattern = a_trajectory.get_pattern();
           length = a_track_pattern.get_shape().get_length();
         }
       }

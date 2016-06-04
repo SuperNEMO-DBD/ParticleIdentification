@@ -98,16 +98,15 @@ namespace snemo {
       uint32_t cut_returned = cuts::SELECTION_INAPPLICABLE;
 
       // Get event record
-      const datatools::things & ER = get_user_data<datatools::things>();
+      auto& ER = get_user_data<datatools::things>();
 
       if (! ER.has(_PTD_label_)) {
         DT_LOG_DEBUG(get_logging_priority(), "Event record has no '" << _PTD_label_ << "' bank !");
         return cut_returned;
       }
-      const snemo::datamodel::particle_track_data & PTD
-        = ER.get<snemo::datamodel::particle_track_data>(_PTD_label_);
+      auto PTD = ER.get<snemo::datamodel::particle_track_data>(_PTD_label_);
 
-      const datatools::properties & aux = PTD.get_auxiliaries();
+      auto aux = PTD.get_auxiliaries();
 
       size_t nelectrons = 0;
       size_t npositrons = 0;
