@@ -151,23 +151,15 @@ namespace snemo {
 
     void topology_module::_prepare_process(snemo::datamodel::particle_track_data & ptd_)
     {
-      DT_LOG_TRACE(get_logging_priority(), "Entering...");
-
       // Process the particle identification driver :
       _pid_driver_.get()->process(ptd_);
-
-      DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     }
 
     void topology_module::_process(const snemo::datamodel::particle_track_data & ptd_,
                                    snemo::datamodel::topology_data & td_ )
     {
-      DT_LOG_TRACE(get_logging_priority(), "Entering...");
-
       // Process the topology driver i.e. TOF, angle meas... :
       _topology_driver_.get()->process(ptd_,td_);
-
-      DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     }
 
   } // end of namespace reconstruction

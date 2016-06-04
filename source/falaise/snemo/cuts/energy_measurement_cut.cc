@@ -84,14 +84,8 @@ namespace snemo {
         DT_THROW_IF(_mode_ == MODE_UNDEFINED, std::logic_error,
                     "Missing at least a 'mode.XXX' property !");
 
-        // mode HAS_ENERGY:
-        if (is_mode_has_energy()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using HAS_ENERGY mode...");
-        } // end if is_mode_has_energy
-
         // mode RANGE_ENERGY:
         if (is_mode_range_energy()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using RANGE_ENERGY mode...");
           size_t count = 0;
           if (configuration_.has_key("range_energy.min")) {
             double emin = configuration_.fetch_real("range_energy.min");
@@ -127,7 +121,6 @@ namespace snemo {
 
     int energy_measurement_cut::_accept()
     {
-      DT_LOG_TRACE(get_logging_priority(), "Entering...");
       uint32_t cut_returned = cuts::SELECTION_INAPPLICABLE;
 
       // Get energy measurement
@@ -155,24 +148,17 @@ namespace snemo {
       bool check_range_energy = true;
       if (is_mode_range_energy()) {
         if (! a_energy_meas.has_energy()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Missing energy !");
           return cuts::SELECTION_INAPPLICABLE;
         }
         const double energy = a_energy_meas.get_energy();
         bool check = true;
         if (datatools::is_valid(_energy_range_min_)) {
           if (energy < _energy_range_min_) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Energy (" << energy/CLHEP::keV << " keV) lower than "
-                         << _energy_range_min_/CLHEP::keV << " keV");
             check = false;
           }
         }
         if (datatools::is_valid(_energy_range_max_)) {
           if (energy > _energy_range_max_) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Energy (" << energy/CLHEP::keV << " keV) greater than "
-                         << _energy_range_max_/CLHEP::keV << " keV");
             check = false;
           }
         }
@@ -182,7 +168,6 @@ namespace snemo {
       cut_returned = cuts::SELECTION_REJECTED;
       if (check_has_energy &&
           check_range_energy) {
-        DT_LOG_DEBUG(get_logging_priority(), "Event accepted by energy measurement cut!");
         cut_returned = cuts::SELECTION_ACCEPTED;
       }
       return cut_returned;

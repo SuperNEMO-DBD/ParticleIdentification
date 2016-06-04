@@ -184,8 +184,6 @@ namespace snemo {
 
     int particle_identification_driver::_process_algo(snemo::datamodel::particle_track_data & ptd_)
     {
-      DT_LOG_TRACE(get_logging_priority(), "Entering...");
-
       // Count number of particles given their label
       typedef std::map<std::string, size_t> particle_counter_type;
       particle_counter_type particle_counter;
@@ -198,7 +196,6 @@ namespace snemo {
         bool particle_is_undefined = true;
         for (auto& ip : _pid_properties_) {
           const std::string & cut_name = ip.first;
-          DT_LOG_DEBUG(get_logging_priority(), "Applying '" << cut_name << "' selection...");
 
           auto cut_mgr = grab_cut_manager();
           DT_THROW_IF(! cut_mgr.has(cut_name), std::logic_error, "Cut '" << cut_name << "' is missing !");
@@ -208,8 +205,6 @@ namespace snemo {
           a_cut.reset_user_data();
 
           if (cut_status != cuts::SELECTION_ACCEPTED) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Current particle does not fulfill '" << cut_name << "' criteria !");
             continue;
           }
 
@@ -218,8 +213,6 @@ namespace snemo {
           const std::string & key = ppt.first;
           std::string value = ppt.second;
           if (is_mode_pid_label()) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Current particle fulfills '" << cut_name << "' criteria !");
              // Store particle label within 'particle_track' auxiliairies
             if (aux.has_key(key)) {
               const std::string a_label = aux.fetch_string(key);
@@ -243,8 +236,6 @@ namespace snemo {
       }
 
       for (auto& i: particle_counter) {
-        DT_LOG_DEBUG(get_logging_priority(), "Number of '" << i.first << "' particles : "
-                     << i.second);
         ptd_.grab_auxiliaries().update_integer(i.first, i.second);
       }
 

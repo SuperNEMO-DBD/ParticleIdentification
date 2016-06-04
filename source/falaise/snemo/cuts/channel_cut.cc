@@ -96,7 +96,7 @@ namespace snemo {
 
       auto TD = ER.get<snemo::datamodel::topology_data>(_TD_label_);
       if (! TD.has_pattern()) {
-        DT_LOG_DEBUG(get_logging_priority(), "Missing topology pattern !");
+        DT_LOG_WARNING(get_logging_priority(), "Missing topology pattern !");
         return cuts::SELECTION_INAPPLICABLE;
       }
 
@@ -106,26 +106,21 @@ namespace snemo {
       for (auto& icut : _cuts_) {
         const std::string & a_meas_label = icut.first;
         if (! a_pattern.has_measurement(a_meas_label)) {
-          DT_LOG_DEBUG(get_logging_priority(), "Missing '" << a_meas_label << "' measurement !");
+          DT_LOG_WARNING(get_logging_priority(), "Missing '" << a_meas_label << "' measurement !");
           return cuts::SELECTION_INAPPLICABLE;
         }
         auto& a_cut = icut.second.grab();
         a_cut.set_user_data(a_pattern.get_measurement(a_meas_label));
         const int status = a_cut.process();
         if (status == cuts::SELECTION_REJECTED) {
-          DT_LOG_DEBUG(get_logging_priority(), "Event rejected by '"
-                       << a_cut.get_name() << "' cut !");
           return cuts::SELECTION_REJECTED;
         } else if (status == cuts::SELECTION_INAPPLICABLE) {
-          DT_LOG_DEBUG(get_logging_priority(), "Cut '" << a_cut.get_name() << "' can not be applied to '"
+          DT_LOG_WARNING(get_logging_priority(), "Cut '" << a_cut.get_name() << "' can not be applied to '"
                        << a_meas_label << "' measurement !");
           return cuts::SELECTION_INAPPLICABLE;
-        } else {
-          DT_LOG_DEBUG(get_logging_priority(), "Event accepted by '" << a_cut.get_name() << "'");
         }
       }
 
-      DT_LOG_DEBUG(get_logging_priority(), "Event accepted by channel '" << get_name() << "'cut !");
       return cuts::SELECTION_ACCEPTED;
     }
 

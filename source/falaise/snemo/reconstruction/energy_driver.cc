@@ -93,7 +93,6 @@ namespace snemo {
     void energy_driver::_process_algo(const snemo::datamodel::particle_track & pt_,
                                       double & energy_)
     {
-      DT_LOG_TRACE(get_logging_priority(), "Entering...");
       // Invalidate result
       datatools::invalidate(energy_);
 
@@ -103,12 +102,7 @@ namespace snemo {
           auto a_calo = icalo->get();
           icalo == the_calos.begin() ? energy_ = a_calo.get_energy() : energy_ += a_calo.get_energy();
         }
-      } else {
-        DT_LOG_DEBUG(get_logging_priority(), "Particle track is not associated to any calorimeter block !");
       }
-
-      DT_LOG_DEBUG(get_logging_priority(), "Particle energy = " << energy_/CLHEP::MeV << " MeV");
-      DT_LOG_TRACE(get_logging_priority(), "Exiting...");
     }
 
     // static

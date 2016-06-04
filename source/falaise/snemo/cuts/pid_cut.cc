@@ -101,7 +101,7 @@ namespace snemo {
       auto& ER = get_user_data<datatools::things>();
 
       if (! ER.has(_PTD_label_)) {
-        DT_LOG_DEBUG(get_logging_priority(), "Event record has no '" << _PTD_label_ << "' bank !");
+        DT_LOG_WARNING(get_logging_priority(), "Event record has no '" << _PTD_label_ << "' bank !");
         return cut_returned;
       }
       auto PTD = ER.get<snemo::datamodel::particle_track_data>(_PTD_label_);
@@ -131,11 +131,6 @@ namespace snemo {
         nundefined = aux.fetch_integer(key);
       }
 
-      DT_LOG_TRACE(get_logging_priority(), "nelectron  = " << nelectrons);
-      DT_LOG_TRACE(get_logging_priority(), "npositron  = " << npositrons);
-      DT_LOG_TRACE(get_logging_priority(), "nalphas    = " << nalphas);
-      DT_LOG_TRACE(get_logging_priority(), "ngammas    = " << ngammas);
-      DT_LOG_TRACE(get_logging_priority(), "nundefined = " << nundefined);
 
       bool check = true;
       if (! _electron_range_.check(nelectrons)) check = false;
@@ -146,7 +141,6 @@ namespace snemo {
 
       cut_returned = cuts::SELECTION_ACCEPTED;
       if (! check) {
-        DT_LOG_DEBUG(get_logging_priority(), "Event rejected by pid cut!");
         cut_returned = cuts::SELECTION_REJECTED;
       }
 

@@ -66,8 +66,6 @@ namespace snemo {
         // several calorimeter hits given the spatial resolution of the track fit:
         // only take care of teh first one)
         energy = the_calorimeters.front().get().get_energy();
-      } else {
-        DT_LOG_WARNING(logging, "Particle track is not associated to any calorimeter block !");
       }
       return energy;
     }
@@ -92,8 +90,6 @@ namespace snemo {
         auto a_calo_hit = the_calorimeters.front().get();
         t_ = a_calo_hit.get_time();
         sigma_t_ = a_calo_hit.get_sigma_time();
-      } else {
-        DT_LOG_WARNING(logging, "Particle track is not associated to any calorimeter block !");
       }
     }
 
@@ -121,8 +117,6 @@ namespace snemo {
         auto a_trajectory = particle_.get_trajectory();
         auto& a_track_pattern = a_trajectory.get_pattern();
         length = a_track_pattern.get_shape().get_length();
-      } else {
-        DT_LOG_WARNING(logging, "Particle has no attached trajectory !");
       }
       return length;
     }
@@ -133,7 +127,7 @@ namespace snemo {
     {
       double length = datatools::invalid_real();
       if (! pte_.has_vertices()) {
-        DT_LOG_WARNING(logging, "Electron has no vertices associated !");
+        //DT_LOG_WARNING(logging, "Electron has no vertices associated !");
         return length;
       }
 
@@ -149,12 +143,12 @@ namespace snemo {
         break;
       }
       if (! geomtools::is_valid(electron_foil_vertex)) {
-        DT_LOG_WARNING(logging, "Electron has no vertices on the calorimeter !");
+        //DT_LOG_WARNING(logging, "Electron has no vertices on the calorimeter !");
         return length;
       }
 
       if (! ptg_.has_vertices()) {
-        DT_LOG_WARNING(logging, "Gamma has no vertices associated !");
+        //DT_LOG_WARNING(logging, "Gamma has no vertices associated !");
         return length;
       }
       auto the_gamma_vertices = ptg_.get_vertices();
@@ -170,7 +164,7 @@ namespace snemo {
         }
       }
       if (! geomtools::is_valid(gamma_first_calo_vertex)) {
-        DT_LOG_WARNING(logging, "Gamma has no vertices on the calorimeter !");
+        //DT_LOG_WARNING(logging, "Gamma has no vertices on the calorimeter !");
         return length;
       }
 
@@ -264,13 +258,13 @@ namespace snemo {
     {
       if (! pt1_.has_associated_calorimeter_hits() ||
           ! pt2_.has_associated_calorimeter_hits()) {
-        DT_LOG_WARNING(get_logging_priority(), "No associated calorimeter !");
+        //DT_LOG_WARNING(get_logging_priority(), "No associated calorimeter !");
         return;
       }
 
       if (snemo::datamodel::pid_utils::particle_is_gamma(pt1_) &&
           snemo::datamodel::pid_utils::particle_is_gamma(pt2_)) {
-        DT_LOG_NOTICE(get_logging_priority(), "TOF calculation not done for 2 gammas !");
+        //DT_LOG_NOTICE(get_logging_priority(), "TOF calculation not done for 2 gammas !");
         return;
       }
 
@@ -282,7 +276,7 @@ namespace snemo {
                  snemo::datamodel::pid_utils::particle_is_gamma(pt2_)) {
         _process_charged_gamma_particles(pt1_, pt2_, proba_int_, proba_ext_);
       } else {
-        DT_LOG_WARNING(get_logging_priority(), "Topology not supported !");
+        //DT_LOG_WARNING(get_logging_priority(), "Topology not supported !");
         return;
       }
     }
@@ -301,15 +295,11 @@ namespace snemo {
       const double m2 = tof_tool::get_mass(pt2_);
       const double t1_th = tof_tool::get_theoretical_time(E1, m1, tl1);
       const double t2_th = tof_tool::get_theoretical_time(E2, m2, tl2);
-      DT_LOG_DEBUG(get_logging_priority(), "t1 th : " << t1_th/CLHEP::ns << " ns");
-      DT_LOG_DEBUG(get_logging_priority(), "t2 th : " << t2_th/CLHEP::ns << " ns");
 
       double t1, t2;
       double sigma_t1, sigma_t2;
       tof_tool::get_time(pt1_, t1, sigma_t1);
       tof_tool::get_time(pt2_, t2, sigma_t2);
-      DT_LOG_DEBUG(get_logging_priority(), "t1 meas. : " << t1/CLHEP::ns << " ns");
-      DT_LOG_DEBUG(get_logging_priority(), "t2 meas. : " << t2/CLHEP::ns << " ns");
 
       const double sigma_l = 0.1 * CLHEP::ns; //kind of arbitrary value to keep the internal probability distribution flat,
                                               // until the uncertainty on the track length is obtained from the reconstruction algorithm.
@@ -321,9 +311,6 @@ namespace snemo {
 
       proba_int_.push_back(gsl_cdf_chisq_Q(chi2_int, 1)*100.*CLHEP::perCent);
       proba_ext_.push_back(gsl_cdf_chisq_Q(chi2_ext, 1)*100.*CLHEP::perCent);
-
-      DT_LOG_DEBUG(get_logging_priority(), "P_int " << proba_int_.front()/CLHEP::perCent << " %");
-      DT_LOG_DEBUG(get_logging_priority(), "P_ext " << proba_ext_.front()/CLHEP::perCent << " %");
     }
 
     void tof_driver::_process_charged_gamma_particles(const snemo::datamodel::particle_track & pt1_,
@@ -344,7 +331,6 @@ namespace snemo {
       const double t1_th = tof_tool::get_theoretical_time(E1, m1, tl1);
       double t1, sigma_t1;
       tof_tool::get_time(a_charged, t1, sigma_t1);
-      DT_LOG_DEBUG(get_logging_priority(), "t1 meas. : " << t1/CLHEP::ns << " ns");
 
       snemo::datamodel::particle_track::vertex_collection_type the_gamma_calos_vertices;
       a_gamma.fetch_vertices(the_gamma_calos_vertices,
@@ -366,9 +352,6 @@ namespace snemo {
 
         proba_int_.push_back(gsl_cdf_chisq_Q(chi2_int, 1)*100.*CLHEP::perCent);
         proba_ext_.push_back(gsl_cdf_chisq_Q(chi2_ext, 1)*100.*CLHEP::perCent);
-
-        DT_LOG_DEBUG(get_logging_priority(), "P_int " << proba_int_.back());
-        DT_LOG_DEBUG(get_logging_priority(), "P_ext " << proba_ext_.back());
       }
     }
 
@@ -382,7 +365,7 @@ namespace snemo {
       datatools::invalidate(sigma_time_);
 
       if (! ptc_.has_vertices()) {
-        DT_LOG_WARNING(get_logging_priority(), "Electron has no vertices associated !");
+        //DT_LOG_WARNING(get_logging_priority(), "Electron has no vertices associated !");
         return;
       }
       auto the_vertices = ptc_.get_vertices();
@@ -397,7 +380,7 @@ namespace snemo {
         break;
       }
       if (! geomtools::is_valid(electron_foil_vertex)) {
-        DT_LOG_WARNING(get_logging_priority(), "Electron has no vertices on the calorimeter !");
+        //DT_LOG_WARNING(get_logging_priority(), "Electron has no vertices on the calorimeter !");
         return;
       }
 
@@ -409,8 +392,8 @@ namespace snemo {
       snemo::datamodel::calibrated_calorimeter_hit::collection_type::const_iterator
         found = std::find_if(the_gamma_calorimeters.begin(),the_gamma_calorimeters.end(), pred_via_handle);
       if (found == the_gamma_calorimeters.end()) {
-        DT_LOG_WARNING(get_logging_priority(), "Calibrated calorimeter hit with id " << vertex_.get_geom_id()
-                       << " can not be found ! Might be a gamma from annihilation.");
+        //DT_LOG_WARNING(get_logging_priority(), "Calibrated calorimeter hit with id " << vertex_.get_geom_id()
+                       //<< " can not be found ! Might be a gamma from annihilation.");
         return;
       }
       auto a_calo_hit = found->get();

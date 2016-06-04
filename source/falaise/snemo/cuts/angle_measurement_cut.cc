@@ -84,14 +84,8 @@ namespace snemo {
         DT_THROW_IF(_mode_ == MODE_UNDEFINED, std::logic_error,
                     "Missing at least a 'mode.XXX' property !");
 
-        // mode HAS_ANGLE:
-        if (is_mode_has_angle()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using HAS_ANGLE mode...");
-        } // end if is_mode_has_angle
-
         // mode PARTICLE_RANGE_ANGLE:
         if (is_mode_range_angle()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using RANGE_ANGLE mode...");
           size_t count = 0;
           if (configuration_.has_key("range_angle.min")) {
             double amin = configuration_.fetch_real("range_angle.min");
@@ -129,7 +123,6 @@ namespace snemo {
 
     int angle_measurement_cut::_accept()
     {
-      DT_LOG_TRACE(get_logging_priority(), "Entering...");
       uint32_t cut_returned = cuts::SELECTION_INAPPLICABLE;
 
       // Get angle measurement
@@ -164,17 +157,11 @@ namespace snemo {
         bool check = true;
         if (datatools::is_valid(_angle_range_min_)) {
           if (angle < _angle_range_min_) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Angle (" << angle/CLHEP::degree << "°) lower than "
-                         << _angle_range_min_/CLHEP::degree << "°");
             check = false;
           }
         }
         if (datatools::is_valid(_angle_range_max_)) {
           if (angle > _angle_range_max_) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Angle (" << angle/CLHEP::degree << "°) greater than "
-                         << _angle_range_max_/CLHEP::degree << "°");
             check = false;
           }
         }
@@ -184,7 +171,6 @@ namespace snemo {
       cut_returned = cuts::SELECTION_REJECTED;
       if (check_has_angle &&
           check_range_angle) {
-        DT_LOG_DEBUG(get_logging_priority(), "Event accepted by angle measurement cut!");
         cut_returned = cuts::SELECTION_ACCEPTED;
       }
       return cut_returned;

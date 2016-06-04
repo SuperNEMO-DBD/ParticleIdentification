@@ -102,8 +102,6 @@ namespace snemo {
     void angle_driver::_process_algo(const snemo::datamodel::particle_track & pt_,
                                      double & angle_)
     {
-      DT_LOG_TRACE(get_logging_priority(), "Entering...");
-
       // Invalidate angle meas.
       datatools::invalidate(angle_);
 
@@ -112,6 +110,7 @@ namespace snemo {
                        "No angle can be deduced from a single gamma !");
         return;
       }
+
       geomtools::vector_3d particle_dir;
       geomtools::invalidate(particle_dir);
       _get_direction(pt_, particle_dir);
@@ -120,16 +119,12 @@ namespace snemo {
         geomtools::vector_3d Ox(1,0,0);
         angle_ = std::acos(particle_dir * Ox) / M_PI * 180 * CLHEP::degree;
       }
-
-      DT_LOG_TRACE(get_logging_priority(), "Exiting...");
     }
 
     void angle_driver::_process_algo(const snemo::datamodel::particle_track & pt1_,
                                      const snemo::datamodel::particle_track & pt2_,
                                      double & angle_)
     {
-      DT_LOG_TRACE(get_logging_priority(), "Entering...");
-
       // Invalidate angle meas.
       datatools::invalidate(angle_);
 
@@ -149,7 +144,6 @@ namespace snemo {
       if (geomtools::is_valid(particle_dir1) && geomtools::is_valid(particle_dir2)) {
         angle_ = std::acos(particle_dir1 * particle_dir2) / M_PI * 180 * CLHEP::degree;
       }
-      DT_LOG_TRACE(get_logging_priority(), "Exiting...");
     }
 
     void angle_driver::_get_direction(const snemo::datamodel::particle_track & pt_,
@@ -176,7 +170,6 @@ namespace snemo {
 
       // Check particle type
       if (snemo::datamodel::pid_utils::particle_is_gamma(pt_)) {
-        DT_LOG_TRACE(get_logging_priority(), "Particle track is a gamma !");
         // Get the first vertex on calorimeter (should be the first associated calorimeter)
         for (auto& i_vtx : the_vertices) {
           if (snemo::datamodel::particle_track::vertex_is_on_main_calorimeter(i_vtx.get()) ||

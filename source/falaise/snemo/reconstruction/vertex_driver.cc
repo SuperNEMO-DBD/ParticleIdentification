@@ -106,8 +106,8 @@ namespace snemo {
     {
       if (snemo::datamodel::pid_utils::particle_is_gamma(pt1_) ||
           snemo::datamodel::pid_utils::particle_is_gamma(pt2_)) {
-        DT_LOG_WARNING(get_logging_priority(),
-                       "Vertex measurement cannot be computed if one particle is a gamma!");
+        //DT_LOG_WARNING(get_logging_priority(),
+                       //"Vertex measurement cannot be computed if one particle is a gamma!");
         return;
       }
 
@@ -142,7 +142,7 @@ namespace snemo {
             };
 
           if (! have_same_origin(vtx1, vtx2)) {
-            DT_LOG_TRACE(get_logging_priority(), "Vertices do not come from the same origin !");
+            //DT_LOG_TRACE(get_logging_priority(), "Vertices do not come from the same origin !");
             continue;
           }
 
