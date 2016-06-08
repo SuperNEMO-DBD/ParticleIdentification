@@ -22,13 +22,13 @@ namespace snemo {
     FL_SNEMO_RECONSTRUCTION_TOPOLOGY_BUILDER_REGISTRATION_IMPLEMENT(topology_2p_builder,
                                                                     "snemo::reconstruction::topology_2p_builder")
 
-    snemo::datamodel::base_topology_pattern::handle_type topology_2p_builder::_create_pattern()
+    snemo::datamodel::base_topology_pattern::handle_type topology_2p_builder::create_pattern()
     {
       snemo::datamodel::base_topology_pattern::handle_type h(new snemo::datamodel::topology_2p_pattern);
       return h;
     }
 
-    void topology_2p_builder::_build_measurement_dictionary(snemo::datamodel::base_topology_pattern & pattern_)
+    void topology_2p_builder::make_measurements(snemo::datamodel::base_topology_pattern & pattern_)
     {
       const std::string p1_label = "p1";
       DT_THROW_IF(! pattern_.has_particle_track(p1_label), std::logic_error,

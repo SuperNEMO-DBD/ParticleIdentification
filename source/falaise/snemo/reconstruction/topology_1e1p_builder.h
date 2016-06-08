@@ -22,9 +22,9 @@ namespace snemo {
     protected:
 
       ///
-      virtual snemo::datamodel::base_topology_pattern::handle_type _create_pattern();
+      virtual snemo::datamodel::base_topology_pattern::handle_type create_pattern();
 
-      virtual void _build_measurement_dictionary(snemo::datamodel::base_topology_pattern & pattern_);
+      virtual void make_measurements(snemo::datamodel::base_topology_pattern& pattern_);
 
     private:
 

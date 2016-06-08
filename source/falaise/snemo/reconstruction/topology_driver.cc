@@ -177,14 +177,14 @@ namespace snemo {
       DT_THROW_IF(! FB.has(a_builder_class_id), std::logic_error,
                   "Topology builder class id '" << a_builder_class_id << "' "
                   << "is not available from the system builder factory register !");
-      const base_topology_builder::factory_register_type::factory_type & the_factory
-        = FB.get(a_builder_class_id);
-      snemo::reconstruction::base_topology_builder * new_builder = the_factory();
-      td_.set_pattern_handle(new_builder->create_pattern());
+      const auto& the_factory = FB.get(a_builder_class_id);
+      auto new_builder = the_factory();
+
 
       // Build new topology pattern
       new_builder->set_measurement_drivers(_drivers_);
-      new_builder->build(ptd_, td_.get_pattern());
+      auto pattern = new_builder->build(ptd_);
+      td_.set_pattern_handle(pattern);
 
       if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
         DT_LOG_TRACE(get_logging_priority(), "New pattern: ");
