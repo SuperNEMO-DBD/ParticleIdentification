@@ -61,7 +61,7 @@ namespace snemo {
       return *_cut_manager_;
     }
 
-    cuts::cut_manager & particle_identification_driver::grab_cut_manager()
+    cuts::cut_manager & particle_identification_driver::get_cut_manager()
     {
       DT_THROW_IF(! has_cut_manager(), std::logic_error,
                   "No cuts manager is setup !");
@@ -127,8 +127,7 @@ namespace snemo {
                   "Missing definitions of particles !");
       std::vector<std::string> pid_definitions;
       setup_.fetch("definitions", pid_definitions);
-      for (size_t i = 0; i < pid_definitions.size(); ++i) {
-        const std::string & key = pid_definitions.at(i);
+      for (const auto& key : pid_definitions) {
         if (is_mode_pid_label()) {
           const std::string str = key + ".label";
           if (setup_.has_key(str)) {
@@ -197,7 +196,7 @@ namespace snemo {
         for (auto& ip : _pid_properties_) {
           const std::string & cut_name = ip.first;
 
-          auto cut_mgr = grab_cut_manager();
+          auto cut_mgr = get_cut_manager();
           DT_THROW_IF(! cut_mgr.has(cut_name), std::logic_error, "Cut '" << cut_name << "' is missing !");
           auto& a_cut = cut_mgr.grab(cut_name);
           a_cut.set_user_data(a_particle);
