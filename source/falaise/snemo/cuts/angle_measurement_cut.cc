@@ -141,7 +141,7 @@ namespace snemo {
       // Check if measurement has angle
       bool check_has_angle = true;
       if (is_mode_has_angle()) {
-        if (! a_angle_meas.has_angle()) {
+        if (! a_angle_meas.is_valid()) {
           check_has_angle = false;
         }
       }
@@ -149,7 +149,7 @@ namespace snemo {
       // Check if measurement has correct angle
       bool check_range_angle = true;
       if (is_mode_range_angle()) {
-        if (! a_angle_meas.has_angle()) {
+        if (! a_angle_meas.is_valid()) {
           DT_LOG_DEBUG(get_logging_priority(), "Missing angle !");
           return cuts::SELECTION_INAPPLICABLE;
         }

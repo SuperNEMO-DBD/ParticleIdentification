@@ -54,11 +54,11 @@ namespace snemo {
         if (drivers.VD) drivers.VD->process(p1, p2, *ptr_vertex_measurement);
       }
 
-      {
-        snemo::datamodel::angle_measurement * ptr_angle = new snemo::datamodel::angle_measurement;
-        meas["angle_" + p1_label + "_" + p2_label].reset(ptr_angle);
-        if (drivers.AMD) drivers.AMD->process(p1, p2, *ptr_angle);
+      if (drivers.AMD) {
+        double angleBetweenPositrons = drivers.AMD->process(p1, p2);
+        meas["angle_" + p1_label + "_" + p2_label].reset(new snemo::datamodel::angle_measurement(angleBetweenPositrons));
       }
+
 
       {
         snemo::datamodel::energy_measurement * ptr_energy = new snemo::datamodel::energy_measurement;

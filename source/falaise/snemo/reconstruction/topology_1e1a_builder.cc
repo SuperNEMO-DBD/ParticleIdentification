@@ -9,6 +9,15 @@
 #include <falaise/snemo/datamodels/angle_measurement.h>
 #include <falaise/snemo/datamodels/vertex_measurement.h>
 
+
+namespace datatools {
+  template <typename T, typename ...Args>
+  datatools::handle<T> make_handle(Args&& ...args) {
+    return datatools::handle<T>(new T(std::forward<Args>(args)...));
+  }
+}
+
+
 namespace snemo {
 
   namespace reconstruction {
@@ -39,17 +48,15 @@ namespace snemo {
 
       auto meas = pattern_.get_measurement_dictionary();
       auto& drivers = base_topology_builder::get_measurement_drivers();
-      {
-        snemo::datamodel::angle_measurement * ptr_angle = new snemo::datamodel::angle_measurement;
-        meas["angle_" + a1_label].reset(ptr_angle);
-        if (drivers.AMD) drivers.AMD->process(a1, *ptr_angle);
+
+      if (drivers.AMD) {
+        double alphaFoilAngle = drivers.AMD->process(a1);
+        meas["angle_" + a1_label].reset(new snemo::datamodel::angle_measurement(alphaFoilAngle));
+
+        double alphaElectronAngle = drivers.AMD->process(e1, a1);
+        meas["angle_" + e1_label + "_" + a1_label].reset(new snemo::datamodel::angle_measurement(alphaElectronAngle));
       }
 
-      {
-        snemo::datamodel::angle_measurement * ptr_angle = new snemo::datamodel::angle_measurement;
-        meas["angle_" + e1_label + "_" + a1_label].reset(ptr_angle);
-        if (drivers.AMD) drivers.AMD->process(e1, a1, *ptr_angle);
-      }
 
       {
         snemo::datamodel::vertex_measurement * ptr_vertex_measurement = new snemo::datamodel::vertex_measurement;

@@ -32,10 +32,10 @@ namespace snemo {
 
       auto meas = pattern_.get_measurement_dictionary();
       auto& drivers = base_topology_builder::get_measurement_drivers();
-      {
-        snemo::datamodel::angle_measurement * ptr_angle = new snemo::datamodel::angle_measurement;
-        meas["angle_" + e1_label].reset(ptr_angle);
-        if (drivers.AMD) drivers.AMD->process(e1, *ptr_angle);
+
+      if (drivers.AMD) {
+        double electronAngle = drivers.AMD->process(e1);
+        meas["angle_" + e1_label].reset(new snemo::datamodel::angle_measurement(electronAngle));
       }
 
       {

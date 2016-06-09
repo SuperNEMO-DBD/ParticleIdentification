@@ -33,7 +33,7 @@
 
 // Third party:
 // - Boost:
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 // - Bayeux/datatools:
 #include <datatools/logger.h>
@@ -54,10 +54,10 @@ namespace snemo {
     class energy_driver;
 
     struct measurement_drivers {
-      boost::scoped_ptr<snemo::reconstruction::tof_driver> TOFD;
-      boost::scoped_ptr<snemo::reconstruction::vertex_driver> VD;
-      boost::scoped_ptr<snemo::reconstruction::angle_driver> AMD;
-      boost::scoped_ptr<snemo::reconstruction::energy_driver> EMD;
+      std::unique_ptr<snemo::reconstruction::tof_driver> TOFD;
+      std::unique_ptr<snemo::reconstruction::vertex_driver> VD;
+      std::unique_ptr<snemo::reconstruction::angle_driver> AMD;
+      std::unique_ptr<snemo::reconstruction::energy_driver> EMD;
     };
 
     /// \brief Driver for the topology algorithm

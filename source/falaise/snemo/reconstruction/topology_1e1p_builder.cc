@@ -43,10 +43,13 @@ namespace snemo {
 
       auto meas = pattern_.get_measurement_dictionary();
       auto& drivers = base_topology_builder::get_measurement_drivers();
-      {
-        snemo::datamodel::angle_measurement * ptr_angle = new snemo::datamodel::angle_measurement;
-        meas["angle_" + p1_label].reset(ptr_angle);
-        if (drivers.AMD) drivers.AMD->process(p1, *ptr_angle);
+
+      if (drivers.AMD) {
+        double positronAngle = drivers.AMD->process(p1);
+        meas["angle_" + p1_label].reset(new snemo::datamodel::angle_measurement(positronAngle));
+
+        double electronPositronAngle = drivers.AMD->process(e1, p1);
+        meas["angle_" + e1_label + "_" + p1_label].reset(new snemo::datamodel::angle_measurement(electronPositronAngle));
       }
 
       {
@@ -67,11 +70,6 @@ namespace snemo {
         if (drivers.VD) drivers.VD->process(e1, p1, *ptr_vertex_measurement);
       }
 
-      {
-        snemo::datamodel::angle_measurement * ptr_angle = new snemo::datamodel::angle_measurement;
-        meas["angle_" + e1_label + "_" + p1_label].reset(ptr_angle);
-        if (drivers.AMD) drivers.AMD->process(e1, p1, *ptr_angle);
-      }
     }
 
   } // end of namespace reconstruction

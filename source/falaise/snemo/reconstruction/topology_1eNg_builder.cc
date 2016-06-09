@@ -58,10 +58,9 @@ namespace snemo {
           if (drivers.TOFD) drivers.TOFD->process(e1, gamma, *ptr_tof);
         }
 
-        {
-          snemo::datamodel::angle_measurement * ptr_angle = new snemo::datamodel::angle_measurement;
-          meas["angle_e1_" + g_label].reset(ptr_angle);
-          if (drivers.AMD) drivers.AMD->process(e1, gamma, *ptr_angle);
+        if (drivers.AMD) {
+          double electronGammaAngle = drivers.AMD->process(e1, gamma);
+          meas["angle_e1_" + g_label].reset(new snemo::datamodel::angle_measurement(electronGammaAngle));
         }
 
         {

@@ -250,12 +250,12 @@ namespace snemo {
     void topology_driver::init_ocd(datatools::object_configuration_description & ocd_)
     {
       // Prefix "TD" stands for "Topology Driver" :
-      datatools::logger::declare_ocd_logging_configuration(ocd_, "fatal", "TD.");
+      //datatools::logger::declare_ocd_logging_configuration(ocd_, "fatal", "TD.");
 
       // Invoke specific OCD support from the driver class:
       ::snemo::reconstruction::tof_driver::init_ocd(ocd_);
       ::snemo::reconstruction::vertex_driver::init_ocd(ocd_);
-      ::snemo::reconstruction::angle_driver::init_ocd(ocd_);
+      //::snemo::reconstruction::angle_driver::init_ocd(ocd_);
       ::snemo::reconstruction::energy_driver::init_ocd(ocd_);
     }
 

@@ -16,34 +16,24 @@ namespace snemo {
     DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(angle_measurement,
                                                       "snemo::datamodel::angle_measurement")
 
-    angle_measurement::angle_measurement()
+    angle_measurement::angle_measurement(double angle)
+    : base_topology_measurement(), angle_(angle)
     {
-      datatools::invalidate(_angle_);
     }
 
     angle_measurement::~angle_measurement()
     {
     }
 
-    bool angle_measurement::has_angle() const
+    bool angle_measurement::is_valid() const
     {
-      return datatools::is_valid(_angle_);
+      return datatools::is_valid(angle_);
     }
 
-    void angle_measurement::set_angle(double angle_)
-    {
-      _angle_ = angle_;
 
-    }
-
-    const double & angle_measurement::get_angle() const
+    double angle_measurement::get_angle() const
     {
-      return _angle_;
-    }
-
-    double & angle_measurement::get_angle()
-    {
-      return _angle_;
+      return angle_;
     }
 
     void angle_measurement::tree_dump(std::ostream      & out_,
@@ -57,8 +47,8 @@ namespace snemo {
 
       out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
            << "Angle: ";
-      if (has_angle()) {
-        out_ << _angle_/CLHEP::degree << "°" << std::endl;
+      if (this->is_valid()) {
+        out_ << angle_/CLHEP::degree << "°" << std::endl;
       } else {
         out_ << "<no value>" << std::endl;
       }

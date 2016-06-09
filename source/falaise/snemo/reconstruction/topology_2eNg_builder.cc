@@ -64,17 +64,13 @@ namespace snemo {
           if (drivers.TOFD) drivers.TOFD->process(e2, gamma, *ptr_tof);
         }
 
-        {
-          snemo::datamodel::angle_measurement * ptr_angle = new snemo::datamodel::angle_measurement;
-          meas["angle_e1_" + g_label].reset(ptr_angle);
-          if (drivers.AMD) drivers.AMD->process(e1, gamma, *ptr_angle);
-        }
 
+        if (drivers.AMD) {
+          double firstElectronGammaAngle = drivers.AMD->process(e1, gamma);
+          meas["angle_e1_" + g_label].reset(new snemo::datamodel::angle_measurement(firstElectronGammaAngle));
 
-        {
-          snemo::datamodel::angle_measurement * ptr_angle = new snemo::datamodel::angle_measurement;
-          meas["angle_e2_" + g_label].reset(ptr_angle);
-          if (drivers.AMD) drivers.AMD->process(e2, gamma, *ptr_angle);
+          double secondElectronGammaAngle = drivers.AMD->process(e2, gamma);
+          meas["angle_e2_" + g_label].reset(new snemo::datamodel::angle_measurement(secondElectronGammaAngle));
         }
 
         {

@@ -27,7 +27,7 @@ namespace snemo {
     void angle_measurement::serialize(Archive & ar_, const unsigned int /* version_ */)
     {
       ar_ & BOOST_SERIALIZATION_BASE_OBJECT_NVP(base_topology_measurement);
-      ar_ & boost::serialization::make_nvp("angle", _angle_);
+      ar_ & boost::serialization::make_nvp("angle", angle_);
       return;
     }
 
