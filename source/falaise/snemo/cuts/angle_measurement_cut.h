@@ -13,11 +13,11 @@
 
 // Third party:
 // - Boost:
-#include <boost/cstdint.hpp>
-// - Bayeux/datatools:
-#include <datatools/bit_mask.h>
 // - Bayeux/cuts:
-#include <cuts/i_cut.h>
+#include <bayeux/cuts/i_cut.h>
+
+// - Bayeux/datatools
+#include <bayeux/datatools/real_range.h>
 
 namespace snemo {
 
@@ -27,32 +27,14 @@ namespace snemo {
     class angle_measurement_cut : public cuts::i_cut
     {
     public:
-
-      /// Mode of the cut
-      enum mode_type {
-        MODE_UNDEFINED   = 0,
-        MODE_HAS_ANGLE   = datatools::bit_mask::bit01,
-        MODE_RANGE_ANGLE = datatools::bit_mask::bit02,
-      };
-
-    public:
       /// Constructor
       angle_measurement_cut(datatools::logger::priority logging_priority_ = datatools::logger::PRIO_FATAL);
 
       /// Destructor
       virtual ~angle_measurement_cut();
 
-      /// Return the cut mode
-      uint32_t get_mode() const;
-
-      /// Check mode FLAG
-      bool is_mode_flag() const;
-
-      /// Check mode HAS_ANGLE
-      bool is_mode_has_angle() const;
-
-      /// Check mode RANGE_ANGLE
-      bool is_mode_range_angle() const;
+      /// Return true if cut requires angle to be present
+      bool angle_required() const;
 
 
       /// Initilization
@@ -72,10 +54,8 @@ namespace snemo {
       virtual int _accept();
 
     private:
-
-      uint32_t _mode_;          //!< Mode of the cut
-      double _angle_range_min_; //!< Minimal angle value
-      double _angle_range_max_; //!< Maximal angle value
+      bool angleRequired_;          //!< True if angle measurement required
+      datatools::real_range angleRange_; //!< Allowed angle range
 
       // Macro to automate the registration of the cut :
       CUT_REGISTRATION_INTERFACE(angle_measurement_cut)
