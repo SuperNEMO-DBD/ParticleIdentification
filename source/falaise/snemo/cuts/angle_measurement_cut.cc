@@ -4,13 +4,12 @@
 #include <falaise/snemo/cuts/angle_measurement_cut.h>
 
 // Standard library:
-#include <stdexcept>
-#include <sstream>
+//#include <stdexcept>
+//#include <sstream>
 
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/properties.h>
-#include <datatools/things.h>
 #include <datatools/clhep_units.h>
 
 // SuperNEMO data models :

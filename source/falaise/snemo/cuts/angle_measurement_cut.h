@@ -36,7 +36,6 @@ namespace snemo {
       /// Return true if cut requires angle to be present
       bool angle_required() const;
 
-
       /// Initilization
       virtual void initialize(const datatools::properties & configuration_,
                               datatools::service_manager & service_manager_,
@@ -46,7 +45,6 @@ namespace snemo {
       virtual void reset();
 
     protected:
-
       /// Default values
       void _set_defaults();
 
