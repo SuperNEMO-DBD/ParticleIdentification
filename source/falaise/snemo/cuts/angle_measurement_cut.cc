@@ -4,13 +4,12 @@
 #include <falaise/snemo/cuts/angle_measurement_cut.h>
 
 // Standard library:
-#include <stdexcept>
-#include <sstream>
+//#include <stdexcept>
+//#include <sstream>
 
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/properties.h>
-#include <datatools/things.h>
 #include <datatools/clhep_units.h>
 
 // SuperNEMO data models :
@@ -25,25 +24,15 @@ namespace snemo {
 
     void angle_measurement_cut::_set_defaults()
     {
-      _mode_ = MODE_UNDEFINED;
-      datatools::invalidate(_angle_range_min_);
-      datatools::invalidate(_angle_range_max_);
+      angleRequired_ = false;
+      angleRange_.invalidate();
     }
 
-    uint32_t angle_measurement_cut::get_mode() const
+    bool angle_measurement_cut::angle_required() const
     {
-      return _mode_;
+      return angleRequired_;
     }
 
-    bool angle_measurement_cut::is_mode_has_angle() const
-    {
-      return _mode_ & MODE_HAS_ANGLE;
-    }
-
-    bool angle_measurement_cut::is_mode_range_angle() const
-    {
-      return _mode_ & MODE_RANGE_ANGLE;
-    }
 
     angle_measurement_cut::angle_measurement_cut(datatools::logger::priority logger_priority_)
       : cuts::i_cut(logger_priority_)
@@ -60,7 +49,7 @@ namespace snemo {
 
     void angle_measurement_cut::reset()
     {
-      _set_defaults();
+      this->_set_defaults();
       this->i_cut::_reset();
       this->i_cut::_set_initialized(false);
     }
@@ -69,62 +58,51 @@ namespace snemo {
                                            datatools::service_manager  & /* service_manager_ */,
                                            cuts::cut_handle_dict_type  & /* cut_dict_ */)
     {
-      DT_THROW_IF(is_initialized(), std::logic_error,
+      DT_THROW_IF(is_initialized(),
+                  std::logic_error,
                   "Cut '" << get_name() << "' is already initialized ! ");
 
       this->i_cut::_common_initialize(configuration_);
 
-      if (_mode_ == MODE_UNDEFINED) {
-        if (configuration_.has_flag("mode.has_angle")) {
-          _mode_ |= MODE_HAS_ANGLE;
-        }
-        if (configuration_.has_flag("mode.range_angle")) {
-          _mode_ |= MODE_RANGE_ANGLE;
-        }
-        DT_THROW_IF(_mode_ == MODE_UNDEFINED, std::logic_error,
-                    "Missing at least a 'mode.XXX' property !");
+      angleRequired_ = configuration_.has_flag("mode.has_angle");
 
-        // mode PARTICLE_RANGE_ANGLE:
-        if (is_mode_range_angle()) {
-          size_t count = 0;
-          if (configuration_.has_key("range_angle.min")) {
-            double amin = configuration_.fetch_real("range_angle.min");
-            if (! configuration_.has_explicit_unit("range_angle.min")) {
-              amin *= CLHEP::degree;
-            }
-            DT_THROW_IF(amin < 0.0*CLHEP::degree || amin > 360.0*CLHEP::degree,
-                        std::range_error,
-                        "Invalid minimal angle value (" << amin << ") !");
-            _angle_range_min_ = amin;
-            count++;
+      // mode PARTICLE_RANGE_ANGLE:
+      datatools::real_range angleLimits(0.0*CLHEP::degree, 360.0*CLHEP::degree);
+
+      // Extract the angle bound, with a default
+      auto get_range_angle = [&configuration_, &angleLimits](const std::string& key) {
+        double value {angleLimits.get_lower()};
+        if (configuration_.has_key(key)) {
+          value = configuration_.fetch_real(key);
+          if (!configuration_.has_explicit_unit(key)) {
+            value *= CLHEP::degree;
           }
-          if (configuration_.has_key("range_angle.max")) {
-            double amax = configuration_.fetch_real("range_angle.max");
-            if (! configuration_.has_explicit_unit("range_angle.max")) {
-              amax *= CLHEP::degree;
-            }
-            DT_THROW_IF(amax < 0.0*CLHEP::degree || amax > 360.0*CLHEP::degree,
-                        std::range_error,
-                        "Invalid maximal angle (" << amax << ") !");
-            _angle_range_max_ = amax;
-            count++;
-          }
-          DT_THROW_IF(count == 0, std::logic_error,
-                      "Missing 'range_angle.min' or 'range_angle.max' property !");
-          if (count == 2 && _angle_range_min_ >= 0 && _angle_range_max_ >= 0) {
-            DT_THROW_IF(_angle_range_min_ > _angle_range_max_, std::logic_error,
-                        "Invalid 'range_angle.min' > 'range_angle.max' values !");
-          }
-        } // end if is_mode_range_angle
-      }
+        }
+        return value;
+      };
+
+      double amin {get_range_angle("range_angle.min")};
+      DT_THROW_IF(!angleLimits.has(amin),
+                  std::range_error,
+                  "Invalid minimal angle value (" << amin << ") !");
+      angleRange_.set_lower(amin);
+
+      double amax {get_range_angle("range_angle.max")};
+      DT_THROW_IF(!angleLimits.has(amax),
+                  std::range_error,
+                  "Invalid maximal angle (" << amax << ") !");
+      angleRange_.set_upper(amax);
+
+      // Require normal ordered range (real_range does not enforce this?)
+      DT_THROW_IF(amin > amax,
+                  std::logic_error,
+                  "Invalid 'range_angle.min' > 'range_angle.max' values !");
       this->i_cut::_set_initialized(true);
     }
 
 
     int angle_measurement_cut::_accept()
     {
-      uint32_t cut_returned = cuts::SELECTION_INAPPLICABLE;
-
       // Get angle measurement
       const snemo::datamodel::angle_measurement * ptr_meas = nullptr;
 
@@ -137,43 +115,24 @@ namespace snemo {
         DT_THROW_IF(true, std::logic_error, "Invalid data type !");
       }
       auto a_angle_meas = *ptr_meas;
+      bool haveValidMeasurement = a_angle_meas.is_valid();
 
       // Check if measurement has angle
-      bool check_has_angle = true;
-      if (is_mode_has_angle()) {
-        if (! a_angle_meas.is_valid()) {
-          check_has_angle = false;
-        }
+      if (this->angle_required() && !haveValidMeasurement) {
+        return cuts::SELECTION_REJECTED;
       }
 
       // Check if measurement has correct angle
-      bool check_range_angle = true;
-      if (is_mode_range_angle()) {
-        if (! a_angle_meas.is_valid()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Missing angle !");
+      bool angleAccepted = true;
+
+      if (angleRange_.is_valid()) {
+        if (!haveValidMeasurement) {
           return cuts::SELECTION_INAPPLICABLE;
         }
-        const double angle = a_angle_meas.get_angle();
-        bool check = true;
-        if (datatools::is_valid(_angle_range_min_)) {
-          if (angle < _angle_range_min_) {
-            check = false;
-          }
-        }
-        if (datatools::is_valid(_angle_range_max_)) {
-          if (angle > _angle_range_max_) {
-            check = false;
-          }
-        }
-        if (! check) check_range_angle = false;
-      } // end of is_mode_range_angle
-
-      cut_returned = cuts::SELECTION_REJECTED;
-      if (check_has_angle &&
-          check_range_angle) {
-        cut_returned = cuts::SELECTION_ACCEPTED;
+        angleAccepted = angleRange_.has(a_angle_meas.get_angle());
       }
-      return cut_returned;
+
+      return angleAccepted ? cuts::SELECTION_ACCEPTED : cuts::SELECTION_REJECTED;
     }
 
   }  // end of namespace cut
@@ -193,7 +152,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::cut::angle_measurement_cut, ocd_)
     // Description of the 'mode.has_angle' configuration property :
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("mode.has_angle")
-      .set_terse_description("Mode requiring angle availability")
+      .set_terse_description("Require a valid angle measurement")
       .set_traits(datatools::TYPE_BOOLEAN)
       .add_example("Activate the requested angle mode:: \n"
                    "                                    \n"
@@ -202,27 +161,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::cut::angle_measurement_cut, ocd_)
                    )
       ;
   }
-
-  {
-    // Description of the 'mode.range_nagle' configuration property :
-    datatools::configuration_property_description & cpd = ocd_.add_property_info();
-    cpd.set_name_pattern("mode.range_angle")
-      .set_terse_description("Mode with a special requested ranged of angle value")
-      .set_traits(datatools::TYPE_BOOLEAN)
-      .add_example("Activate the mode::                 \n"
-                   "                                    \n"
-                   "  mode.range_angle : boolean = true \n"
-                   "                                    \n"
-                   )
-      ;
-  }
-
   {
     // Description of the 'range_angle.min' configuration property :
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("range_angle.min")
       .set_terse_description("Minimal value of the requested ranged angle")
-      .set_triggered_by_flag("mode.range_angle")
       .set_traits(datatools::TYPE_REAL)
       .set_explicit_unit(true)
       .set_unit_label("angle")
@@ -240,7 +183,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::cut::angle_measurement_cut, ocd_)
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("range_angle.max")
       .set_terse_description("Maximal value of the requested ranged angle")
-      .set_triggered_by_flag("mode.range_angle")
       .set_traits(datatools::TYPE_REAL)
       .set_explicit_unit(true)
       .set_unit_label("angle")
@@ -258,7 +200,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::cut::angle_measurement_cut, ocd_)
                                "``datatools::properties`` ASCII format::        \n"
                                "                                                \n"
                                "   mode.has_angle : boolean = true              \n"
-                               "   mode.range_angle : boolean = true            \n"
                                "   range_angle.min : real as angle = 5 degree   \n"
                                "   range_angle.max : real as angle = 100 degree \n"
                                "                                                \n"
