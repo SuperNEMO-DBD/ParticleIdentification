@@ -10,40 +10,26 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/properties.h>
-#include <datatools/things.h>
 #include <datatools/clhep_units.h>
 
 // SuperNEMO data models :
 #include <falaise/snemo/datamodels/energy_measurement.h>
 
 namespace snemo {
-
-  namespace cut {
+namespace cut {
 
     // Registration instantiation macro :
     CUT_REGISTRATION_IMPLEMENT(energy_measurement_cut, "snemo::cut::energy_measurement_cut")
 
     void energy_measurement_cut::_set_defaults()
     {
-      _mode_ = MODE_UNDEFINED;
-      datatools::invalidate(_energy_range_min_);
-      datatools::invalidate(_energy_range_max_);
-      return;
+      energyRequired_ = false;
+      energyRange_.invalidate();
     }
 
-    uint32_t energy_measurement_cut::get_mode() const
+    bool energy_measurement_cut::energy_required() const
     {
-      return _mode_;
-    }
-
-    bool energy_measurement_cut::is_mode_has_energy() const
-    {
-      return _mode_ & MODE_HAS_ENERGY;
-    }
-
-    bool energy_measurement_cut::is_mode_range_energy() const
-    {
-      return _mode_ & MODE_RANGE_ENERGY;
+      return energyRequired_;
     }
 
     energy_measurement_cut::energy_measurement_cut(datatools::logger::priority logger_priority_)
@@ -52,13 +38,11 @@ namespace snemo {
       _set_defaults();
       this->register_supported_user_data_type<snemo::datamodel::base_topology_measurement>();
       this->register_supported_user_data_type<snemo::datamodel::energy_measurement>();
-      return;
     }
 
     energy_measurement_cut::~energy_measurement_cut()
     {
       if (is_initialized()) this->energy_measurement_cut::reset();
-      return;
     }
 
     void energy_measurement_cut::reset()
@@ -66,135 +50,85 @@ namespace snemo {
       _set_defaults();
       this->i_cut::_reset();
       this->i_cut::_set_initialized(false);
-      return;
     }
 
     void energy_measurement_cut::initialize(const datatools::properties & configuration_,
                                            datatools::service_manager  & /* service_manager_ */,
                                            cuts::cut_handle_dict_type  & /* cut_dict_ */)
     {
-      DT_THROW_IF(is_initialized(), std::logic_error,
+      DT_THROW_IF(is_initialized(),
+                  std::logic_error,
                   "Cut '" << get_name() << "' is already initialized ! ");
 
       this->i_cut::_common_initialize(configuration_);
 
-      if (_mode_ == MODE_UNDEFINED) {
-        if (configuration_.has_flag("mode.has_energy")) {
-          _mode_ |= MODE_HAS_ENERGY;
-        }
-        if (configuration_.has_flag("mode.range_energy")) {
-          _mode_ |= MODE_RANGE_ENERGY;
-        }
-        DT_THROW_IF(_mode_ == MODE_UNDEFINED, std::logic_error,
-                    "Missing at least a 'mode.XXX' property !");
+      energyRequired_ = configuration_.has_flag("mode.has_energy");
 
-        // mode HAS_ENERGY:
-        if (is_mode_has_energy()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using HAS_ENERGY mode...");
-        } // end if is_mode_has_energy
+      // Extract the energy bound, with a default, throwing for
+      // unphysical values;
+      auto get_range_energy = [&configuration_](const std::string& key) {
+        double value {0.0*CLHEP::keV};
+        if (configuration_.has_key(key)) {
+          value = configuration_.fetch_real(key);
+          if (!configuration_.has_explicit_unit(key)) {
+            value *= CLHEP::keV;
+          }
+        }
+        DT_THROW_IF(value < 0.0,
+                    std::range_error,
+                    "Unphysical energy in parameter '" << key << "': " << value);
+        return value;
+      };
 
-        // mode RANGE_ENERGY:
-        if (is_mode_range_energy()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using RANGE_ENERGY mode...");
-          size_t count = 0;
-          if (configuration_.has_key("range_energy.min")) {
-            double emin = configuration_.fetch_real("range_energy.min");
-            if (! configuration_.has_explicit_unit("range_energy.min")) {
-              emin *= CLHEP::keV;
-            }
-            DT_THROW_IF(emin < 0.0*CLHEP::keV, std::range_error,
-                        "Invalid minimal energy value (" << emin << ") !");
-            _energy_range_min_ = emin;
-            count++;
-          }
-          if (configuration_.has_key("range_energy.max")) {
-            double emax = configuration_.fetch_real("range_energy.max");
-            if (! configuration_.has_explicit_unit("range_energy.max")) {
-              emax *= CLHEP::keV;
-            }
-            DT_THROW_IF(emax < 0.0*CLHEP::keV, std::range_error,
-                        "Invalid maximal energy (" << emax << ") !");
-            _energy_range_max_ = emax;
-            count++;
-          }
-          DT_THROW_IF(count == 0, std::logic_error,
-                      "Missing 'range_energy.min' or 'range_energy.max' property !");
-          if (count == 2 && _energy_range_min_ >= 0 && _energy_range_max_ >= 0) {
-            DT_THROW_IF(_energy_range_min_ > _energy_range_max_, std::logic_error,
-                        "Invalid 'range_energy.min' > 'range_energy.max' values !");
-          }
-        } // end if is_mode_range_energy
-      }
+      double emin {get_range_energy("range_energy.min")};
+      energyRange_.set_lower(emin);
+
+      double emax {get_range_energy("range_energy.max")};
+      energyRange_.set_upper(emax);
+
+      // Require normal ordered range (real_range does not enforce this?)
+      DT_THROW_IF(emin > emax,
+                  std::logic_error,
+                  "Range is not normal ordered : range_energy.min (" << emin << ") > 'range_energy.max (" << emax << ")'!");
       this->i_cut::_set_initialized(true);
-      return;
     }
 
 
     int energy_measurement_cut::_accept()
     {
-      DT_LOG_TRACE(get_logging_priority(), "Entering...");
-      uint32_t cut_returned = cuts::SELECTION_INAPPLICABLE;
-
       // Get energy measurement
       const snemo::datamodel::energy_measurement * ptr_meas = 0;
       if (is_user_data<snemo::datamodel::energy_measurement>()) {
         ptr_meas = &(get_user_data<snemo::datamodel::energy_measurement>());
       } else if (is_user_data<snemo::datamodel::base_topology_measurement>()) {
-        const snemo::datamodel::base_topology_measurement & btm
-          = get_user_data<snemo::datamodel::base_topology_measurement>();
+        auto& btm = get_user_data<snemo::datamodel::base_topology_measurement>();
         ptr_meas = dynamic_cast<const snemo::datamodel::energy_measurement *>(&btm);
       } else {
         DT_THROW_IF(true, std::logic_error, "Invalid data type !");
       }
-      const snemo::datamodel::energy_measurement & a_energy_meas = *ptr_meas;
+
+      auto a_energy_meas = *ptr_meas;
+      bool haveValidMeasurement = a_energy_meas.has_energy();
 
       // Check if measurement has energy
-      bool check_has_energy = true;
-      if (is_mode_has_energy()) {
-        if (! a_energy_meas.has_energy()) {
-          check_has_energy = false;
-        }
+      if (this->energy_required() && !haveValidMeasurement) {
+        return cuts::SELECTION_REJECTED;
       }
 
-      // Check if measurement has correct energy
-      bool check_range_energy = true;
-      if (is_mode_range_energy()) {
-        if (! a_energy_meas.has_energy()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Missing energy !");
+      // Check if measurement has correct angle
+      bool energyAccepted = true;
+
+      if (energyRange_.is_valid()) {
+        if (!haveValidMeasurement) {
           return cuts::SELECTION_INAPPLICABLE;
         }
-        const double energy = a_energy_meas.get_energy();
-        bool check = true;
-        if (datatools::is_valid(_energy_range_min_)) {
-          if (energy < _energy_range_min_) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Energy (" << energy/CLHEP::keV << " keV) lower than "
-                         << _energy_range_min_/CLHEP::keV << " keV");
-            check = false;
-          }
-        }
-        if (datatools::is_valid(_energy_range_max_)) {
-          if (energy > _energy_range_max_) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Energy (" << energy/CLHEP::keV << " keV) greater than "
-                         << _energy_range_max_/CLHEP::keV << " keV");
-            check = false;
-          }
-        }
-        if (! check) check_range_energy = false;
-      } // end of is_mode_range_energy
-
-      cut_returned = cuts::SELECTION_REJECTED;
-      if (check_has_energy &&
-          check_range_energy) {
-        DT_LOG_DEBUG(get_logging_priority(), "Event accepted by energy measurement cut!");
-        cut_returned = cuts::SELECTION_ACCEPTED;
+        energyAccepted = energyRange_.has(a_energy_meas.get_energy());
       }
-      return cut_returned;
+
+      return energyAccepted ? cuts::SELECTION_ACCEPTED : cuts::SELECTION_REJECTED;
     }
 
-  }  // end of namespace cut
-
+}  // end of namespace cut
 }  // end of namespace snemo
 
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::cut::energy_measurement_cut, ocd_)
@@ -219,27 +153,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::cut::energy_measurement_cut, ocd_)
                    )
       ;
   }
-
-  {
-    // Description of the 'mode.range_nagle' configuration property :
-    datatools::configuration_property_description & cpd = ocd_.add_property_info();
-    cpd.set_name_pattern("mode.range_energy")
-      .set_terse_description("Mode with a special requested ranged of energy value")
-      .set_traits(datatools::TYPE_BOOLEAN)
-      .add_example("Activate the mode::                  \n"
-                   "                                     \n"
-                   "  mode.range_energy : boolean = true \n"
-                   "                                     \n"
-                   )
-      ;
-  }
-
   {
     // Description of the 'range_energy.min' configuration property :
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("range_energy.min")
       .set_terse_description("Minimal value of the requested ranged energy")
-      .set_triggered_by_flag("mode.range_energy")
       .set_traits(datatools::TYPE_REAL)
       .set_explicit_unit(true)
       .set_unit_label("energy")
@@ -257,7 +175,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::cut::energy_measurement_cut, ocd_)
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("range_energy.max")
       .set_terse_description("Maximal value of the requested ranged energy")
-      .set_triggered_by_flag("mode.range_energy")
       .set_traits(datatools::TYPE_REAL)
       .set_explicit_unit(true)
       .set_unit_label("energy")
@@ -283,7 +200,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::cut::energy_measurement_cut, ocd_)
 
   ocd_.set_validation_support(true);
   ocd_.lock();
-  return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 

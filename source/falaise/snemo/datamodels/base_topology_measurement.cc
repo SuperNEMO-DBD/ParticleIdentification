@@ -14,12 +14,10 @@ namespace snemo {
 
     base_topology_measurement::base_topology_measurement()
     {
-      return;
     }
 
     base_topology_measurement::~base_topology_measurement()
     {
-      return;
     }
 
     const datatools::properties & base_topology_measurement::get_auxiliaries() const
@@ -57,8 +55,6 @@ namespace snemo {
         indent_oss << datatools::i_tree_dumpable::inherit_skip_tag(inherit_) ;
         _auxiliaries_.tree_dump(out_, "", indent_oss.str());
       }
-
-      return;
     }
 
   } // end of namespace datamodel

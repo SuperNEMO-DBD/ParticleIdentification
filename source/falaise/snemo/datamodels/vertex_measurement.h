@@ -24,7 +24,6 @@ namespace snemo {
     class vertex_measurement : public base_topology_measurement {
 
     public:
-
       /// Constructor
       vertex_measurement();
 
@@ -38,7 +37,7 @@ namespace snemo {
       const geomtools::blur_spot & get_vertex() const;
 
       /// Get a mutable reference to vertex location
-      geomtools::blur_spot & grab_vertex();
+      geomtools::blur_spot & get_vertex();
 
       /// Check probability validity
       bool has_probability() const;

@@ -24,6 +24,7 @@ namespace snemo {
       /// Typedef for probability type
       typedef std::vector<double> probability_type;
 
+    public:
       /// Constructor
       tof_measurement();
 
@@ -37,7 +38,7 @@ namespace snemo {
       const probability_type & get_internal_probabilities() const;
 
       /// Get a mutable reference to internal probabilities
-      probability_type & grab_internal_probabilities();
+      probability_type & get_internal_probabilities();
 
       /// Check if current measure has external probabilities
       bool has_external_probabilities() const;
@@ -46,7 +47,7 @@ namespace snemo {
       const probability_type & get_external_probabilities() const;
 
       /// Get a mutable reference to external probabilities
-      probability_type & grab_external_probabilities();
+      probability_type & get_external_probabilities();
 
       /// Smart print
       virtual void tree_dump(std::ostream      & out_    = std::clog,

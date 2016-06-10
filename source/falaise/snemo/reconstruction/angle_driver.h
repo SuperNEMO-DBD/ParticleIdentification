@@ -36,15 +36,20 @@
 #include <vector>
 
 // - Bayeux/datatools:
-#include <bayeux/datatools/logger.h>
+#include <bayeux/datatools/handle.h>
 // - Bayeux/geomtools:
 #include <bayeux/geomtools/clhep.h>
+
+namespace datatools {
+  class properties;
+}
 
 namespace snemo {
 
   namespace datamodel {
     class particle_track;
     class angle_measurement;
+    class base_topology_measurement;
   }
 
   namespace reconstruction {
@@ -53,67 +58,27 @@ namespace snemo {
     class angle_driver
     {
     public:
-
       /// Dedicated driver id
       static const std::string & get_id();
 
-      /// Setting logging priority
-      void set_logging_priority(const datatools::logger::priority priority_);
-
-      /// Getting logging priority
-      datatools::logger::priority get_logging_priority() const;
-
+    public:
       /// Constructor
       angle_driver();
 
       /// Destructor
       ~angle_driver();
 
-      /// Check if the driver is initialized
-      bool is_initialized() const;
 
       /// Initialize the driver through configuration properties
       void initialize(const datatools::properties & setup_);
 
-      /// Main process for single particle angle measurement
-      void process(const snemo::datamodel::particle_track & pt_,
-                   snemo::datamodel::angle_measurement & angle_);
+      /// Return angle between foil and trajectory at foil vertex
+      double process(const snemo::datamodel::particle_track& pt_);
 
-      /// Main process for angle between two particle tracks
-      void process(const snemo::datamodel::particle_track & pt1_,
-                   const snemo::datamodel::particle_track & pt2_,
-                   snemo::datamodel::angle_measurement & angle_);
+      /// Return angle between trajectories evaluated at foil vertices
+      double process(const snemo::datamodel::particle_track & pt1_,
+                     const snemo::datamodel::particle_track & pt2_);
 
-      /// Reset the driver
-      void reset();
-
-      /// OCD support:
-      static void init_ocd(datatools::object_configuration_description & ocd_);
-
-    protected:
-
-      /// Set the initialization flag
-      void _set_initialized(bool);
-
-      /// Give default values to specific class members.
-      void _set_defaults();
-
-      /// Special method to process single particle track
-      void _process_algo(const snemo::datamodel::particle_track & pt_,
-                         double & angle_);
-
-      /// Special method to process two particle tracks
-      void _process_algo(const snemo::datamodel::particle_track & pt1_,
-                         const snemo::datamodel::particle_track & pt2_,
-                         double & angle_);
-
-      /// Get direction of a particle track
-      void _get_direction(const snemo::datamodel::particle_track & pt_,
-                          geomtools::vector_3d & direction_);
-
-    private:
-      bool                        _initialized_;      //!< Initialization status
-      datatools::logger::priority _logging_priority_; //!< Logging priority
     };
 
   }  // end of namespace reconstruction
@@ -122,8 +87,8 @@ namespace snemo {
 
 
 // Declare the OCD interface of the module
-#include <datatools/ocd_macros.h>
-DOCD_CLASS_DECLARATION(snemo::reconstruction::angle_driver)
+//#include <datatools/ocd_macros.h>
+//DOCD_CLASS_DECLARATION(snemo::reconstruction::angle_driver)
 
 #endif // FALAISE_ANGLE_MEASUREMENT_PLUGIN_SNEMO_RECONSTRUCTION_ANGLE_DRIVER_H
 

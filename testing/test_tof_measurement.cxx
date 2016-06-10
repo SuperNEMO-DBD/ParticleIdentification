@@ -18,13 +18,11 @@ int main()
     std::clog << "Test program for the 'tof_measurement' class." << std::endl;
     // Fake TOF measurement
     snemo::datamodel::tof_measurement TM;
-    snemo::datamodel::tof_measurement::probability_type & int_probs
-      = TM.grab_internal_probabilities();
+    auto int_probs = TM.get_internal_probabilities();
     int_probs.push_back(10 * CLHEP::perCent);
     int_probs.push_back(30 * CLHEP::perCent);
     int_probs.push_back(40 * CLHEP::perCent);
-    snemo::datamodel::tof_measurement::probability_type & ext_probs
-      = TM.grab_external_probabilities();
+    auto ext_probs = TM.get_external_probabilities();
     ext_probs.push_back(1e-1 * CLHEP::perCent);
     ext_probs.push_back(1e-4 * CLHEP::perCent);
     ext_probs.push_back(1e-5 * CLHEP::perCent);

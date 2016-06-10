@@ -32,7 +32,6 @@ namespace snemo {
       datatools::invalidate(_int_prob_range_max_);
       datatools::invalidate(_ext_prob_range_min_);
       datatools::invalidate(_ext_prob_range_max_);
-      return;
     }
 
     uint32_t tof_measurement_cut::get_mode() const
@@ -66,13 +65,11 @@ namespace snemo {
       _set_defaults();
       this->register_supported_user_data_type<snemo::datamodel::base_topology_measurement>();
       this->register_supported_user_data_type<snemo::datamodel::tof_measurement>();
-      return;
     }
 
     tof_measurement_cut::~tof_measurement_cut()
     {
       if (is_initialized()) this->tof_measurement_cut::reset();
-      return;
     }
 
     void tof_measurement_cut::reset()
@@ -80,7 +77,6 @@ namespace snemo {
       _set_defaults();
       this->i_cut::_reset();
       this->i_cut::_set_initialized(false);
-      return;
     }
 
     void tof_measurement_cut::initialize(const datatools::properties & configuration_,
@@ -108,14 +104,8 @@ namespace snemo {
         DT_THROW_IF(_mode_ == MODE_UNDEFINED, std::logic_error,
                     "Missing at least a 'mode.XXX' property !");
 
-        // mode HAS_INTERNAL_PROBABILITY:
-        if (is_mode_has_internal_probability()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using HAS_INTERNAL_PROBABILITY mode...");
-        } // end if is_mode_has_internal_probability
-
         // mode PARTICLE_RANGE_INTERNAL_PROBABILITY:
         if (is_mode_range_internal_probability()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using RANGE_INTERNAL_PROBABILITY mode...");
           if (configuration_.has_key("range_internal_probability.mode")) {
             const std::string mode = configuration_.fetch_string("range_internal_probability.mode");
             if (mode == "strict") {
@@ -160,14 +150,8 @@ namespace snemo {
           }
         } // end if is_mode_range_internal_probability
 
-        // mode HAS_EXTERNAL_PROBABILITY:
-        if (is_mode_has_external_probability()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using HAS_EXTERNAL_PROBABILITY mode...");
-        } // end if is_mode_has_external_probability
-
         // mode PARTICLE_RANGE_EXTERNAL_PROBABILITY:
         if (is_mode_range_external_probability()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using RANGE_EXTERNAL_PROBABILITY mode...");
           if (configuration_.has_key("range_external_probability.mode")) {
             const std::string mode = configuration_.fetch_string("range_external_probability.mode");
             if (mode == "strict") {
@@ -213,27 +197,26 @@ namespace snemo {
      }
 
       this->i_cut::_set_initialized(true);
-      return;
     }
 
 
     int tof_measurement_cut::_accept()
     {
-      DT_LOG_TRACE(get_logging_priority(), "Entering...");
       uint32_t cut_returned = cuts::SELECTION_INAPPLICABLE;
 
       // Get tof measurement
       const snemo::datamodel::tof_measurement * ptr_meas = 0;
+
       if (is_user_data<snemo::datamodel::tof_measurement>()) {
         ptr_meas = &(get_user_data<snemo::datamodel::tof_measurement>());
       } else if (is_user_data<snemo::datamodel::base_topology_measurement>()) {
-        const snemo::datamodel::base_topology_measurement & btm
-          = get_user_data<snemo::datamodel::base_topology_measurement>();
+        auto& btm = get_user_data<snemo::datamodel::base_topology_measurement>();
         ptr_meas = dynamic_cast<const snemo::datamodel::tof_measurement *>(&btm);
       } else {
         DT_THROW_IF(true, std::logic_error, "Invalid data type !");
       }
-      const snemo::datamodel::tof_measurement & a_tof_meas = *ptr_meas;
+
+      auto a_tof_meas = *ptr_meas;
 
       // Check if measurement has internal probability
       bool check_has_internal_probability = true;
@@ -250,16 +233,12 @@ namespace snemo {
           DT_LOG_DEBUG(get_logging_priority(), "Missing internal probability !");
           return cuts::SELECTION_INAPPLICABLE;
         }
-        const snemo::datamodel::tof_measurement::probability_type & pints
-          = a_tof_meas.get_internal_probabilities();
-        for (snemo::datamodel::tof_measurement::probability_type::const_iterator
-               ip = pints.begin(); ip != pints.end(); ++ip) {
-          const double pint = *ip;
+
+        auto pints = a_tof_meas.get_internal_probabilities();
+
+        for (auto& ip : pints) {
           if (datatools::is_valid(_int_prob_range_min_)) {
-            if (pint < _int_prob_range_min_) {
-              DT_LOG_DEBUG(get_logging_priority(),
-                           "Internal probability (" << pint/CLHEP::perCent << "%) lower than "
-                           << _int_prob_range_min_/CLHEP::perCent << "%");
+            if (ip < _int_prob_range_min_) {
               check_range_internal_probability = false;
               if (_int_prob_range_mode_ == MODE_RANGE_STRICT) {
                 break;
@@ -267,14 +246,10 @@ namespace snemo {
             }
           }
         }
-        for (snemo::datamodel::tof_measurement::probability_type::const_iterator
-               ip = pints.begin(); ip != pints.end(); ++ip) {
-          const double pint = *ip;
+
+        for (auto& ip : pints) {
           if (datatools::is_valid(_int_prob_range_max_)) {
-            if (pint > _int_prob_range_max_) {
-              DT_LOG_DEBUG(get_logging_priority(),
-                           "Internal probability (" << pint/CLHEP::perCent << "%) greater than "
-                           << _int_prob_range_max_/CLHEP::perCent << "%");
+            if (ip > _int_prob_range_max_) {
               check_range_internal_probability = false;
               if (_int_prob_range_mode_ == MODE_RANGE_STRICT) {
                 break;
@@ -296,19 +271,14 @@ namespace snemo {
       bool check_range_external_probability = true;
       if (is_mode_range_external_probability()) {
         if (! a_tof_meas.has_external_probabilities()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Missing external probability !");
+          DT_LOG_WARNING(get_logging_priority(), "Missing external probability !");
           return cuts::SELECTION_INAPPLICABLE;
         }
-        const snemo::datamodel::tof_measurement::probability_type & pexts
-          = a_tof_meas.get_external_probabilities();
-        for (snemo::datamodel::tof_measurement::probability_type::const_iterator
-               ip = pexts.begin(); ip != pexts.end(); ++ip) {
-          const double pext = *ip;
+
+        auto pexts = a_tof_meas.get_external_probabilities();
+        for (auto& ip : pexts) {
           if (datatools::is_valid(_ext_prob_range_min_)) {
-            if (pext < _ext_prob_range_min_) {
-              DT_LOG_DEBUG(get_logging_priority(),
-                           "External probability (" << pext/CLHEP::perCent << "%) lower than "
-                           << _ext_prob_range_min_/CLHEP::perCent << "%");
+            if (ip < _ext_prob_range_min_) {
               check_range_external_probability = false;
               if (_ext_prob_range_mode_ == MODE_RANGE_STRICT) {
                 break;
@@ -316,14 +286,10 @@ namespace snemo {
             }
           }
         }
-        for (snemo::datamodel::tof_measurement::probability_type::const_iterator
-               ip = pexts.begin(); ip != pexts.end(); ++ip) {
-          const double pext = *ip;
+
+        for (auto& ip : pexts) {
           if (datatools::is_valid(_ext_prob_range_max_)) {
-            if (pext > _ext_prob_range_max_) {
-              DT_LOG_DEBUG(get_logging_priority(),
-                           "External probability (" << pext/CLHEP::perCent << "%) greater than "
-                           << _ext_prob_range_max_/CLHEP::perCent << "%");
+            if (ip > _ext_prob_range_max_) {
               check_range_external_probability = false;
               if (_ext_prob_range_mode_ == MODE_RANGE_STRICT) {
                 break;
@@ -339,7 +305,6 @@ namespace snemo {
           check_range_internal_probability &&
           check_range_external_probability
           ) {
-        DT_LOG_DEBUG(get_logging_priority(), "Event accepted by TOF measurement cut!");
         cut_returned = cuts::SELECTION_ACCEPTED;
       }
       return cut_returned;

@@ -20,18 +20,18 @@ namespace snemo {
     class topology_1e_pattern : public base_topology_pattern
     {
     public:
-
       /// Static function to return pattern identifier of the pattern
       static const std::string & pattern_id();
 
-      /// Return pattern identifier of the pattern
-      virtual std::string get_pattern_id() const;
-
+    public:
       /// Constructor
       topology_1e_pattern();
 
       /// Destructor
       virtual ~topology_1e_pattern();
+
+      /// Return pattern identifier of the pattern
+      virtual std::string get_pattern_id() const;
 
       /// Check electron track availability
       bool has_electron_track() const;

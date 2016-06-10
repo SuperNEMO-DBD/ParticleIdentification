@@ -36,7 +36,7 @@ namespace snemo {
       const double & get_energy() const;
 
       /// Get a mutable reference to energy
-      double & grab_energy();
+      double & get_energy();
 
       /// Smart print
       virtual void tree_dump(std::ostream      & out_    = std::clog,

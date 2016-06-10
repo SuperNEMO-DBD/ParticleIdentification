@@ -22,28 +22,26 @@ namespace snemo {
     FL_SNEMO_RECONSTRUCTION_TOPOLOGY_BUILDER_REGISTRATION_IMPLEMENT(topology_2e_builder,
                                                                     "snemo::reconstruction::topology_2e_builder")
 
-    snemo::datamodel::base_topology_pattern::handle_type topology_2e_builder::_create_pattern()
+    snemo::datamodel::base_topology_pattern::handle_type topology_2e_builder::create_pattern()
     {
       snemo::datamodel::base_topology_pattern::handle_type h(new snemo::datamodel::topology_2e_pattern);
       return h;
     }
 
-    void topology_2e_builder::_build_measurement_dictionary(snemo::datamodel::base_topology_pattern & pattern_)
+    void topology_2e_builder::make_measurements(snemo::datamodel::base_topology_pattern & pattern_)
     {
       const std::string e1_label = "e1";
       DT_THROW_IF(! pattern_.has_particle_track(e1_label), std::logic_error,
                   "No particle with label '" << e1_label << "' has been stored !");
-      const snemo::datamodel::particle_track & e1 = pattern_.get_particle_track(e1_label);
+      auto e1 = pattern_.get_particle_track(e1_label);
 
       const std::string e2_label = "e2";
       DT_THROW_IF(! pattern_.has_particle_track(e2_label), std::logic_error,
                   "No particle with label '" << e2_label << "' has been stored !");
-      const snemo::datamodel::particle_track & e2 = pattern_.get_particle_track(e2_label);
+      auto e2 = pattern_.get_particle_track(e2_label);
 
-      snemo::datamodel::base_topology_pattern::measurement_dict_type & meas
-        = pattern_.grab_measurement_dictionary();
-      const snemo::reconstruction::measurement_drivers & drivers
-        = base_topology_builder::get_measurement_drivers();
+      auto meas = pattern_.get_measurement_dictionary();
+      auto& drivers = base_topology_builder::get_measurement_drivers();
       {
         snemo::datamodel::tof_measurement * ptr_tof = new snemo::datamodel::tof_measurement;
         meas["tof_" + e1_label + "_" + e2_label].reset(ptr_tof);
@@ -56,10 +54,9 @@ namespace snemo {
         if (drivers.VD) drivers.VD->process(e1, e2, *ptr_vertex_measurement);
       }
 
-      {
-        snemo::datamodel::angle_measurement * ptr_angle = new snemo::datamodel::angle_measurement;
-        meas["angle_" + e1_label + "_" + e2_label].reset(ptr_angle);
-        if (drivers.AMD) drivers.AMD->process(e1, e2, *ptr_angle);
+      if (drivers.AMD) {
+        double angleBetweenElectrons = drivers.AMD->process(e1, e2);
+        meas["angle_" + e1_label + "_" + e2_label].reset(new snemo::datamodel::angle_measurement(angleBetweenElectrons));
       }
 
       {
@@ -73,8 +70,6 @@ namespace snemo {
         meas["energy_" + e2_label].reset(ptr_energy);
         if (drivers.EMD) drivers.EMD->process(e2, *ptr_energy);
       }
-
-      return;
     }
 
   } // end of namespace reconstruction

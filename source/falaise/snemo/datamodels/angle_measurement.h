@@ -20,24 +20,17 @@ namespace snemo {
     class angle_measurement : public base_topology_measurement {
 
     public:
-
       /// Constructor
-      angle_measurement();
+      explicit angle_measurement(double angle = datatools::invalid_real_double());
 
       /// Destructor
       ~angle_measurement();
 
-      /// Check angle validity
-      bool has_angle() const;
+      /// Check measurement validity
+      bool is_valid() const;
 
-      /// Set angle value
-      void set_angle(double angle_);
-
-      /// Get a non-mutable reference to angle
-      const double & get_angle() const;
-
-      /// Get a mutable reference to angle
-      double & grab_angle();
+      /// Return the measured angle 
+      double get_angle() const;
 
       /// Smart print
       virtual void tree_dump(std::ostream      & out_    = std::clog,
@@ -46,8 +39,7 @@ namespace snemo {
                              bool inherit_               = false) const;
 
     private:
-
-      double _angle_; //!< The angle value
+      double angle_; //!< The angle measurement
 
       DATATOOLS_SERIALIZATION_DECLARATION()
     };

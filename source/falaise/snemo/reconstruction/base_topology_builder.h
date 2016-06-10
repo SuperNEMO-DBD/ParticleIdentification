@@ -31,6 +31,11 @@ namespace snemo {
     class base_topology_builder
     {
     public:
+      /// Constructor
+      base_topology_builder();
+
+      /// Destructor
+      ~base_topology_builder();
 
       /// Check if measurement drivers are available
       bool has_measurement_drivers() const;
@@ -41,28 +46,18 @@ namespace snemo {
       /// Get a non-mutable reference to measurement drivers
       const measurement_drivers & get_measurement_drivers() const;
 
-      /// Pure virtual method to create a topology pattern related to topology builder
-      virtual snemo::datamodel::base_topology_pattern::handle_type create_pattern();
-
       /// Main function to build topology pattern
-      virtual void build(const snemo::datamodel::particle_track_data & source_,
-                         snemo::datamodel::base_topology_pattern & pattern_);
-
-      /// Constructor
-      base_topology_builder();
-
-      /// Destructor
-      ~base_topology_builder();
+      virtual snemo::datamodel::base_topology_pattern::handle_type build(const snemo::datamodel::particle_track_data & source_);
 
     protected:
 
       /// Pure virtual method to create a topology pattern related to topology builder
-      virtual snemo::datamodel::base_topology_pattern::handle_type _create_pattern() = 0;
+      virtual snemo::datamodel::base_topology_pattern::handle_type create_pattern() = 0;
 
-      virtual void _build_particle_tracks_dictionary(const snemo::datamodel::particle_track_data & source_,
-                                                     snemo::datamodel::base_topology_pattern::particle_track_dict_type & tracks_);
+      virtual void make_track_dictionary(const snemo::datamodel::particle_track_data & source_,
+                                                     snemo::datamodel::base_topology_pattern& pattern_);
 
-      virtual void _build_measurement_dictionary(snemo::datamodel::base_topology_pattern & pattern_) = 0;
+      virtual void make_measurements(snemo::datamodel::base_topology_pattern & pattern_) = 0;
 
     protected:
 

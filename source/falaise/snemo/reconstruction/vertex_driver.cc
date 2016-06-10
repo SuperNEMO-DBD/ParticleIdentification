@@ -36,13 +36,11 @@ namespace snemo {
     void vertex_driver::_set_initialized(bool i_)
     {
       _initialized_ = i_;
-      return;
     }
 
     void vertex_driver::set_logging_priority(const datatools::logger::priority priority_)
     {
       _logging_priority_ = priority_;
-      return;
     }
 
     datatools::logger::priority vertex_driver::get_logging_priority() const
@@ -54,7 +52,6 @@ namespace snemo {
     vertex_driver::vertex_driver()
     {
       _set_defaults();
-      return;
     }
 
     // Destructor
@@ -63,7 +60,6 @@ namespace snemo {
       if (is_initialized()) {
         reset();
       }
-      return;
     }
 
     void vertex_driver::_set_defaults()
@@ -71,7 +67,6 @@ namespace snemo {
 
       _initialized_ = false;
       _logging_priority_ = datatools::logger::PRIO_WARNING;
-      return;
     }
 
     // Initialization :
@@ -109,27 +104,20 @@ namespace snemo {
                                       const snemo::datamodel::particle_track & pt2_,
                                       snemo::datamodel::vertex_measurement & vertex_)
     {
-      DT_LOG_TRACE(get_logging_priority(), "Entering...");
-
       if (snemo::datamodel::pid_utils::particle_is_gamma(pt1_) ||
           snemo::datamodel::pid_utils::particle_is_gamma(pt2_)) {
-        DT_LOG_WARNING(get_logging_priority(),
-                       "Vertex measurement cannot be computed if one particle is a gamma!");
+        //DT_LOG_WARNING(get_logging_priority(),
+                       //"Vertex measurement cannot be computed if one particle is a gamma!");
         return;
       }
 
-      const snemo::datamodel::particle_track::vertex_collection_type & the_vertices_1
-        = pt1_.get_vertices();
-      const snemo::datamodel::particle_track::vertex_collection_type & the_vertices_2
-        = pt2_.get_vertices();
-      for (snemo::datamodel::particle_track::vertex_collection_type::const_iterator
-             ivtx1 = the_vertices_1.begin();
-           ivtx1 != the_vertices_1.end(); ++ivtx1) {
-        for (snemo::datamodel::particle_track::vertex_collection_type::const_iterator
-               ivtx2 = the_vertices_2.begin();
-             ivtx2 != the_vertices_2.end(); ++ivtx2) {
-          const geomtools::blur_spot & vtx1 = ivtx1->get();
-          const geomtools::blur_spot & vtx2 = ivtx2->get();
+      auto the_vertices_1 = pt1_.get_vertices();
+      auto the_vertices_2 = pt2_.get_vertices();
+
+      for (auto& ivtx1 : the_vertices_1) {
+        for (auto& ivtx2 : the_vertices_2) {
+          auto vtx1 = ivtx1.get();
+          auto vtx2 = ivtx2.get();
 
           auto have_same_origin = [] (const geomtools::blur_spot & vtx1_,
                                       const geomtools::blur_spot & vtx2_) -> bool
@@ -154,16 +142,13 @@ namespace snemo {
             };
 
           if (! have_same_origin(vtx1, vtx2)) {
-            DT_LOG_TRACE(get_logging_priority(), "Vertices do not come from the same origin !");
+            //DT_LOG_TRACE(get_logging_priority(), "Vertices do not come from the same origin !");
             continue;
           }
 
           _find_common_vertex(vtx1, vtx2, vertex_);
         }
       }
-
-      DT_LOG_TRACE(get_logging_priority(), "Exiting...");
-      return;
     }
 
     void vertex_driver::_find_common_vertex(const geomtools::blur_spot & vtx1_,
@@ -212,7 +197,7 @@ namespace snemo {
       if (! vertex_.has_probability() || vertex_.get_probability() < probability) {
         // Update vertex value
         vertex_.set_probability(probability);
-        geomtools::blur_spot & a_spot = vertex_.grab_vertex();
+        geomtools::blur_spot & a_spot = vertex_.get_vertex();
         a_spot.set_blur_dimension(vtx1_.get_blur_dimension());
         a_spot.set_position(bary);
         // temporary store the vertices distance in the barycenter errors
@@ -232,7 +217,6 @@ namespace snemo {
           a_spot.set_z_error(0);
 
       }
-      return ;
     }
 
     // static
@@ -256,7 +240,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::reconstruction::vertex_driver, ocd_)
   ocd_.set_class_documentation("The driver determines the spatial difference between vertices");
   ocd_.set_validation_support(true);
   ocd_.lock();
-  return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 DOCD_CLASS_SYSTEM_REGISTRATION(snemo::reconstruction::vertex_driver,

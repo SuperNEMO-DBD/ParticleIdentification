@@ -55,8 +55,9 @@ int main()
         electron.set_trajectory_handle(a_trajectory);
       }
       electron.tree_dump();
-      snemo::datamodel::angle_measurement angle;
-      AD.process(electron, angle);
+      double driverCalculatedAngle = AD.process(electron);
+      snemo::datamodel::angle_measurement angle {driverCalculatedAngle};
+
       std::clog << "Electron angle : " << std::endl;
       angle.tree_dump();
     }

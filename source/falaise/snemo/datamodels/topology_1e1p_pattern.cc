@@ -32,12 +32,10 @@ namespace snemo {
     topology_1e1p_pattern::topology_1e1p_pattern()
       : topology_1e_pattern()
     {
-      return;
     }
 
     topology_1e1p_pattern::~topology_1e1p_pattern()
     {
-      return;
     }
 
     bool topology_1e1p_pattern::has_positron_track() const
@@ -147,10 +145,10 @@ namespace snemo {
     {
       double length = datatools::invalid_real();
       if (has_positron_track()) {
-        const snemo::datamodel::particle_track & the_positron = get_positron_track();
+        auto the_positron = get_positron_track();
         if (the_positron.has_trajectory()) {
-          const snemo::datamodel::tracker_trajectory & a_trajectory = the_positron.get_trajectory();
-          const snemo::datamodel::base_trajectory_pattern & a_track_pattern = a_trajectory.get_pattern();
+          auto a_trajectory = the_positron.get_trajectory();
+          auto& a_track_pattern = a_trajectory.get_pattern();
           length = a_track_pattern.get_shape().get_length();
         }
       }

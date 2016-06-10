@@ -78,13 +78,11 @@ namespace snemo {
       _set_defaults();
       this->register_supported_user_data_type<snemo::datamodel::base_topology_measurement>();
       this->register_supported_user_data_type<snemo::datamodel::vertex_measurement>();
-      return;
     }
 
     vertices_measurement_cut::~vertices_measurement_cut()
     {
       if (is_initialized()) this->vertices_measurement_cut::reset();
-      return;
     }
 
     void vertices_measurement_cut::reset()
@@ -92,7 +90,6 @@ namespace snemo {
       _set_defaults();
       this->i_cut::_reset();
       this->i_cut::_set_initialized(false);
-      return;
     }
 
     void vertices_measurement_cut::initialize(const datatools::properties & configuration_,
@@ -126,15 +123,8 @@ namespace snemo {
         DT_THROW_IF(_mode_ == MODE_UNDEFINED, std::logic_error,
                     "Missing at least a 'mode.XXX' property !");
 
-        // mode HAS_VERTICES_PROBABILITY:
-        if (is_mode_has_vertices_probability()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using HAS_VERTICES_PROBABILITY mode...");
-        } // end if is_mode_has_vertices_probability
-
         // mode PARTICLE_RANGE_VERTICES_PROBABILITY:
         if (is_mode_range_vertices_probability()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using RANGE_VERTICES_PROBABILITY mode...");
-
           size_t count = 0;
           if (configuration_.has_key("range_vertices_probability.min")) {
             double pmin = configuration_.fetch_real("range_vertices_probability.min");
@@ -166,15 +156,9 @@ namespace snemo {
           }
         } // end if is_mode_range_vertices_probability
 
-        // mode HAS_VERTICES_PROBABILITY:
-        if (is_mode_has_vertices_probability()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using HAS_VERTICES_PROBABILITY mode...");
-        } // end if is_mode_has_vertices_probability
 
         // mode PARTICLE_RANGE_VERTICES_DISTANCE_X:
         if (is_mode_range_vertices_distance_x()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using RANGE_VERTICES_DISTANCE_X mode...");
-
           size_t count = 0;
           if (configuration_.has_key("range_vertices_distance_x.min")) {
             double vtx_dist_x_min = configuration_.fetch_real("range_vertices_distance_x.min");
@@ -208,8 +192,6 @@ namespace snemo {
 
         // mode PARTICLE_RANGE_VERTICES_DISTANCE_Y:
         if (is_mode_range_vertices_distance_y()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using RANGE_VERTICES_DISTANCE_Y mode...");
-
           size_t count = 0;
           if (configuration_.has_key("range_vertices_distance_y.min")) {
             double vtx_dist_y_min = configuration_.fetch_real("range_vertices_distance_y.min");
@@ -243,8 +225,6 @@ namespace snemo {
 
         // mode PARTICLE_RANGE_VERTICES_DISTANCE_Z:
         if (is_mode_range_vertices_distance_z()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Using RANGE_VERTICES_DISTANCE_Z mode...");
-
           size_t count = 0;
           if (configuration_.has_key("range_vertices_distance_z.min")) {
             double vtx_dist_z_min = configuration_.fetch_real("range_vertices_distance_z.min");
@@ -279,26 +259,23 @@ namespace snemo {
       }
 
       this->i_cut::_set_initialized(true);
-      return;
     }
 
     int vertices_measurement_cut::_accept()
     {
-      DT_LOG_TRACE(get_logging_priority(), "Entering...");
       uint32_t cut_returned = cuts::SELECTION_INAPPLICABLE;
 
       // Get vertices measurement
-      const snemo::datamodel::vertex_measurement * ptr_meas = 0;
+      const snemo::datamodel::vertex_measurement * ptr_meas = nullptr;
       if (is_user_data<snemo::datamodel::vertex_measurement>()) {
         ptr_meas = &(get_user_data<snemo::datamodel::vertex_measurement>());
       } else if (is_user_data<snemo::datamodel::base_topology_measurement>()) {
-        const snemo::datamodel::base_topology_measurement & btm
-          = get_user_data<snemo::datamodel::base_topology_measurement>();
+        auto& btm = get_user_data<snemo::datamodel::base_topology_measurement>();
         ptr_meas = dynamic_cast<const snemo::datamodel::vertex_measurement *>(&btm);
       } else {
         DT_THROW_IF(true, std::logic_error, "Invalid data type !");
       }
-      const snemo::datamodel::vertex_measurement & a_vertices_meas = *ptr_meas;
+      auto a_vertices_meas = *ptr_meas;
 
       // Check if measurement has vertices probability
       bool check_has_vertices_probability = true;
@@ -312,24 +289,18 @@ namespace snemo {
       bool check_range_vertices_probability = true;
       if (is_mode_range_vertices_probability()) {
         if (! a_vertices_meas.has_probability()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Missing vertices probability !");
+          DT_LOG_WARNING(get_logging_priority(), "Missing vertices probability !");
           return cuts::SELECTION_INAPPLICABLE;
         }
         const double & proba = a_vertices_meas.get_probability();
         if (datatools::is_valid(_vertices_prob_range_min_)) {
           if (proba < _vertices_prob_range_min_) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Vertices probability (" << proba/CLHEP::perCent << "%) lower than "
-                         << _vertices_prob_range_min_/CLHEP::perCent << "%");
             check_range_vertices_probability = false;
           }
         }
 
         if (datatools::is_valid(_vertices_prob_range_max_)) {
           if (proba > _vertices_prob_range_max_) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Vertices probability (" << proba/CLHEP::perCent << "%) greater than "
-                         << _vertices_prob_range_max_/CLHEP::perCent << "%");
             check_range_vertices_probability = false;
           }
         }
@@ -347,24 +318,18 @@ namespace snemo {
       bool check_range_vertices_distance_x = true;
       if (is_mode_range_vertices_distance_x()) {
         if (! a_vertices_meas.has_vertices_distance()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Missing vertices distance !");
+          DT_LOG_WARNING(get_logging_priority(), "Missing vertices distance !");
           return cuts::SELECTION_INAPPLICABLE;
         }
         const double & vtx_dist_x = a_vertices_meas.get_vertices_distance_x();
         if (datatools::is_valid(_vertices_dist_x_range_min_)) {
           if (vtx_dist_x < _vertices_dist_x_range_min_) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Vertices distance in X (" << vtx_dist_x/CLHEP::mm << "mm) lower than "
-                         << _vertices_dist_x_range_min_/CLHEP::mm << "mm");
             check_range_vertices_distance_x = false;
           }
         }
 
         if (datatools::is_valid(_vertices_dist_x_range_max_)) {
           if (vtx_dist_x > _vertices_dist_x_range_max_) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Vertices distance in X (" << vtx_dist_x/CLHEP::mm << "mm) greater than "
-                         << _vertices_dist_x_range_max_/CLHEP::mm << "mm");
             check_range_vertices_distance_x = false;
           }
         }
@@ -374,25 +339,19 @@ namespace snemo {
       bool check_range_vertices_distance_y = true;
       if (is_mode_range_vertices_distance_y()) {
         if (! a_vertices_meas.has_vertices_distance()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Missing vertices distance !");
+          DT_LOG_WARNING(get_logging_priority(), "Missing vertices distance !");
           return cuts::SELECTION_INAPPLICABLE;
         }
         const double & vtx_dist_y = a_vertices_meas.get_vertices_distance_y();
 
         if (datatools::is_valid(_vertices_dist_y_range_min_)) {
           if (vtx_dist_y < _vertices_dist_y_range_min_) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Vertices distance in Y (" << vtx_dist_y/CLHEP::mm << "mm) lower than "
-                         << _vertices_dist_y_range_min_/CLHEP::mm << "mm");
             check_range_vertices_distance_y = false;
           }
         }
 
         if (datatools::is_valid(_vertices_dist_y_range_max_)) {
           if (vtx_dist_y > _vertices_dist_y_range_max_) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Vertices distance in Y (" << vtx_dist_y/CLHEP::mm << "mm) greater than "
-                         << _vertices_dist_y_range_max_/CLHEP::mm << "mm");
             check_range_vertices_distance_y = false;
           }
         }
@@ -402,24 +361,18 @@ namespace snemo {
       bool check_range_vertices_distance_z = true;
       if (is_mode_range_vertices_distance_z()) {
         if (! a_vertices_meas.has_vertices_distance()) {
-          DT_LOG_DEBUG(get_logging_priority(), "Missing vertices distance !");
+          DT_LOG_WARNING(get_logging_priority(), "Missing vertices distance !");
           return cuts::SELECTION_INAPPLICABLE;
         }
         const double & vtx_dist_z = a_vertices_meas.get_vertices_distance_z();
         if (datatools::is_valid(_vertices_dist_z_range_min_)) {
           if (vtx_dist_z < _vertices_dist_z_range_min_) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Vertices distance in Z (" << vtx_dist_z/CLHEP::mm << "mm) lower than "
-                         << _vertices_dist_z_range_min_/CLHEP::mm << "mm");
             check_range_vertices_distance_z = false;
           }
         }
 
         if (datatools::is_valid(_vertices_dist_z_range_max_)) {
           if (vtx_dist_z > _vertices_dist_z_range_max_) {
-            DT_LOG_DEBUG(get_logging_priority(),
-                         "Vertices distance in Z (" << vtx_dist_z/CLHEP::mm << "mm) greater than "
-                         << _vertices_dist_z_range_max_/CLHEP::mm << "mm");
             check_range_vertices_distance_z = false;
           }
         }
@@ -433,7 +386,6 @@ namespace snemo {
           check_range_vertices_distance_y  &&
           check_range_vertices_distance_z
           ) {
-        DT_LOG_DEBUG(get_logging_priority(), "Event accepted by VERTICES measurement cut!");
         cut_returned = cuts::SELECTION_ACCEPTED;
       }
       return cut_returned;
@@ -532,7 +484,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::cut::vertices_measurement_cut, ocd_)
 
   ocd_.set_validation_support(true);
   ocd_.lock();
-  return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 

@@ -1,21 +1,11 @@
-# CMAKE_COMPILER
-# - Basic CMake setup
-# Check version meets ou requirements
-# Declare project, which will configure compiler for us
 cmake_minimum_required(VERSION 3.3)
 project(FalaiseParticleIdentificationPlugin)
 
-# Ensure our code can see the Falaise headers
-#include_directories(${Falaise_INCLUDE_DIRS})
-include_directories(${FALAISE_BUILDPRODUCT_DIR}/include)
-include_directories(${FALAISE_BUILDPRODUCT_DIR}/include/falaise)
-include_directories(${Bayeux_INCLUDE_DIRS})
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/source)
+include(GNUInstallDirs)
 
+find_package(Falaise 2.1.0 REQUIRED)
 ###########################################################################################
 # - GammaTracking modules:
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/source/falaise)
 
 # - Headers:
 list(APPEND FalaiseParticleIdentificationPlugin_HEADERS
@@ -109,29 +99,16 @@ list(APPEND FalaiseParticleIdentificationPlugin_SOURCES
 add_library(Falaise_ParticleIdentification SHARED
   ${FalaiseParticleIdentificationPlugin_HEADERS}
   ${FalaiseParticleIdentificationPlugin_SOURCES})
-
-target_link_libraries(Falaise_ParticleIdentification Falaise)
-
-# Apple linker requires dynamic lookup of symbols, so we
-# add link flags on this platform
-if(APPLE)
-  set_target_properties(Falaise_ParticleIdentification
-    PROPERTIES LINK_FLAGS "-undefined dynamic_lookup"
-    )
-endif()
+target_include_directories(Falaise_ParticleIdentification
+  PUBLIC
+    ${PROJECT_SOURCE_DIR}/source
+    ${PROJECT_SOURCE_DIR}/source/falaise
+  )
+target_link_libraries(Falaise_ParticleIdentification FalaiseModule)
 
 # Install it:
-install(TARGETS Falaise_ParticleIdentification DESTINATION ${CMAKE_INSTALL_LIBDIR}/Falaise/modules)
-
-# - Publish headers
-foreach(_hdrin ${FalaiseParticleIdentificationPlugin_HEADERS})
-  string(REGEX REPLACE "source/falaise/" "" _hdrout "${_hdrin}")
-  configure_file(${_hdrin} ${FALAISE_BUILDPRODUCT_DIR}/include/falaise/${_hdrout} @ONLY)
-endforeach()
+install(TARGETS Falaise_ParticleIdentification DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Test support:
-option(FalaiseParticleIdentificationPlugin_ENABLE_TESTING "Build unit testing system for FalaiseParticleIdentification" ON)
-if(FalaiseParticleIdentificationPlugin_ENABLE_TESTING)
-  enable_testing()
-  add_subdirectory(testing)
-endif()
+enable_testing()
+add_subdirectory(testing)

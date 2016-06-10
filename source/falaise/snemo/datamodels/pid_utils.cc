@@ -60,7 +60,7 @@ namespace snemo {
 
     bool pid_utils::particle_is(const particle_track & pt_, const std::string & label_)
     {
-      const datatools::properties & aux = pt_.get_auxiliaries();
+      auto aux = pt_.get_auxiliaries();
       if (! aux.has_key(pid_label_key())) {
         DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
                        "Missing '" << pid_label_key() << "' property !");
@@ -98,14 +98,12 @@ namespace snemo {
       size_t ipart = 0;
 
       if (! ptd_.has_particles()) return ipart;
-      const snemo::datamodel::particle_track_data::particle_collection_type & the_particles
-        = ptd_.get_particles();
 
-      for (snemo::datamodel::particle_track_data::particle_collection_type::const_iterator
-             i = the_particles.begin(); i != the_particles.end(); ++i) {
-        const snemo::datamodel::particle_track::handle_type & a_particle = *i;
-        if (pid_utils::particle_is(a_particle.get(), label_)) {
-          particles_.push_back(a_particle);
+      auto the_particles = ptd_.get_particles();
+
+      for (auto& i: the_particles) {
+        if (pid_utils::particle_is(i.get(), label_)) {
+          particles_.push_back(i);
           ipart++;
         }
       }

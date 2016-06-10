@@ -31,10 +31,6 @@ namespace snemo {
                                   public datatools::i_tree_dumpable
     {
     public:
-
-      /// Return topology pattern id
-      virtual std::string get_pattern_id() const = 0;
-
       /// Typedef to particle track dictionary
       typedef std::map<std::string, snemo::datamodel::particle_track::handle_type> particle_track_dict_type;
 
@@ -47,8 +43,18 @@ namespace snemo {
       /// Typedef to measurement dictionary
       typedef std::map<std::string, handle_measurement> measurement_dict_type;
 
+    public:
+      /// Constructor
+      base_topology_pattern();
+
+      /// Destructor
+      virtual ~base_topology_pattern();
+
+      /// Return topology pattern id
+      virtual std::string get_pattern_id() const = 0;
+
       /// Get a mutable reference to particle track dictionary
-      particle_track_dict_type & grab_particle_track_dictionary();
+      particle_track_dict_type & get_particle_track_dictionary();
 
       /// Get a non-mutable reference to particle track dictionary
       const particle_track_dict_type & get_particle_track_dictionary() const;
@@ -73,7 +79,7 @@ namespace snemo {
                     std::logic_error,
                     "Topology pattern does not hold any '" << label_ << "' measurement !");
         const std::type_info & ti = typeid(T);
-        const std::type_info & tf = typeid(get_measurement(label_));
+        const std::type_info & tf = typeid(decltype(get_measurement(label_)));
         return ti == tf;
       }
 
@@ -88,16 +94,11 @@ namespace snemo {
       }
 
       /// Get a mutable reference to measurement dictionary
-      measurement_dict_type & grab_measurement_dictionary();
+      measurement_dict_type & get_measurement_dictionary();
 
       /// Get a non-mutable reference to measurement dictionary
       const measurement_dict_type & get_measurement_dictionary() const;
 
-      /// Constructor
-      base_topology_pattern();
-
-      /// Destructor
-      virtual ~base_topology_pattern();
 
       /// Smart print
       virtual void tree_dump(std::ostream      & out_    = std::clog,

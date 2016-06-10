@@ -29,12 +29,10 @@ namespace snemo {
     topology_1e1a_pattern::topology_1e1a_pattern()
       : topology_1e_pattern()
     {
-      return;
     }
 
     topology_1e1a_pattern::~topology_1e1a_pattern()
     {
-      return;
     }
 
     bool topology_1e1a_pattern::has_alpha_track() const
@@ -84,10 +82,10 @@ namespace snemo {
     {
       double time = datatools::invalid_real();
       if (has_alpha_track()) {
-        const snemo::datamodel::particle_track & the_alpha = get_alpha_track();
+        auto the_alpha = get_alpha_track();
         if (the_alpha.has_trajectory()) {
-          const snemo::datamodel::tracker_trajectory & a_trajectory = the_alpha.get_trajectory();
-          const datatools::properties & aux = a_trajectory.get_auxiliaries();
+          auto a_trajectory = the_alpha.get_trajectory();
+          auto aux = a_trajectory.get_auxiliaries();
           if (aux.has_key("t0")) {
             time = aux.fetch_real("t0");
           }
@@ -100,10 +98,10 @@ namespace snemo {
     {
       double length = datatools::invalid_real();
       if (has_alpha_track()) {
-        const snemo::datamodel::particle_track & the_alpha = get_alpha_track();
+        auto the_alpha = get_alpha_track();
         if (the_alpha.has_trajectory()) {
-          const snemo::datamodel::tracker_trajectory & a_trajectory = the_alpha.get_trajectory();
-          const snemo::datamodel::base_trajectory_pattern & a_track_pattern = a_trajectory.get_pattern();
+          auto a_trajectory = the_alpha.get_trajectory();
+          auto& a_track_pattern = a_trajectory.get_pattern();
           length = a_track_pattern.get_shape().get_length();
         }
       }

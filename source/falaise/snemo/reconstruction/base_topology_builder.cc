@@ -15,6 +15,17 @@ namespace snemo {
     DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_topology_builder,
                                                      "snemo::reconstruction::base_topology_builder/__system__")
 
+
+    base_topology_builder::base_topology_builder()
+    {
+      _drivers = 0;
+    }
+
+    base_topology_builder::~base_topology_builder()
+    {
+    }
+
+
     bool base_topology_builder::has_measurement_drivers() const
     {
       return _drivers != 0;
@@ -23,7 +34,6 @@ namespace snemo {
     void base_topology_builder::set_measurement_drivers(const measurement_drivers & drivers_)
     {
       _drivers = &drivers_;
-      return;
     }
 
     const measurement_drivers & base_topology_builder::get_measurement_drivers() const
@@ -31,43 +41,28 @@ namespace snemo {
       return *_drivers;
     }
 
-    base_topology_builder::base_topology_builder()
-    {
-      _drivers = 0;
-      return;
-    }
 
-    base_topology_builder::~base_topology_builder()
-    {
-      return;
-    }
-
-    snemo::datamodel::base_topology_pattern::handle_type base_topology_builder::create_pattern()
-    {
-      return _create_pattern();
-    }
-
-    void base_topology_builder::build(const snemo::datamodel::particle_track_data & source_,
-                                      snemo::datamodel::base_topology_pattern & pattern_)
+    snemo::datamodel::base_topology_pattern::handle_type
+    base_topology_builder::build(const snemo::datamodel::particle_track_data& tracks)
     {
       DT_THROW_IF(! has_measurement_drivers(), std::logic_error, "Missing measurement drivers !");
-      this->_build_particle_tracks_dictionary(source_, pattern_.grab_particle_track_dictionary());
-      _build_measurement_dictionary(pattern_);
+      auto builtPattern = this->create_pattern();
+      this->make_track_dictionary(tracks, builtPattern.grab());
+      this->make_measurements(builtPattern.grab());
+      return builtPattern;
     }
 
-    void base_topology_builder::_build_particle_tracks_dictionary(const snemo::datamodel::particle_track_data & ptd_,
-                                                                  snemo::datamodel::base_topology_pattern::particle_track_dict_type & tracks_)
+    void base_topology_builder::make_track_dictionary(const snemo::datamodel::particle_track_data & ptd_,
+                                                                  snemo::datamodel::base_topology_pattern& pattern_)
     {
       size_t n_electrons = 0;
       size_t n_positrons = 0;
       size_t n_alphas    = 0;
       size_t n_gammas    = 0;
-      const snemo::datamodel::particle_track_data::particle_collection_type & the_particles
-        = ptd_.get_particles();
-      for (snemo::datamodel::particle_track_data::particle_collection_type::const_iterator
-             i_particle = the_particles.begin();
-           i_particle != the_particles.end(); ++i_particle) {
-        const snemo::datamodel::particle_track & a_particle = i_particle->get();
+      auto the_particles = ptd_.get_particles();
+
+      for (auto& i_particle : the_particles) {
+        auto a_particle = i_particle.get();
         std::ostringstream key;
         if (snemo::datamodel::pid_utils::particle_is_electron(a_particle)) {
           key << "e" << ++n_electrons;
@@ -84,9 +79,8 @@ namespace snemo {
         else {
           continue; // no undefined particles for now
         }
-        tracks_[key.str()] = *i_particle;
+        pattern_.get_particle_track_dictionary()[key.str()] = i_particle;
       }
-      return;
     }
 
   } // end of namespace reconstruction

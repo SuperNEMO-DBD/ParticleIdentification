@@ -13,11 +13,11 @@
 
 // Third party:
 // - Boost:
-#include <boost/cstdint.hpp>
-// - Bayeux/datatools:
-#include <datatools/bit_mask.h>
 // - Bayeux/cuts:
-#include <cuts/i_cut.h>
+#include <bayeux/cuts/i_cut.h>
+
+// - Bayeux/datatools
+#include <bayeux/datatools/real_range.h>
 
 namespace snemo {
 
@@ -27,36 +27,19 @@ namespace snemo {
     class energy_measurement_cut : public cuts::i_cut
     {
     public:
-
-      /// Mode of the cut
-      enum mode_type {
-        MODE_UNDEFINED   = 0,
-        MODE_HAS_ENERGY   = datatools::bit_mask::bit01,
-        MODE_RANGE_ENERGY = datatools::bit_mask::bit02,
-      };
-
-      /// Return the cut mode
-      uint32_t get_mode() const;
-
-      /// Check mode FLAG
-      bool is_mode_flag() const;
-
-      /// Check mode HAS_ENERGY
-      bool is_mode_has_energy() const;
-
-      /// Check mode RANGE_ENERGY
-      bool is_mode_range_energy() const;
-
       /// Constructor
       energy_measurement_cut(datatools::logger::priority logging_priority_ = datatools::logger::PRIO_FATAL);
 
       /// Destructor
       virtual ~energy_measurement_cut();
+      
+      /// Return true if cut requires a valid energy measurement
+      bool energy_required() const;
 
       /// Initilization
-      virtual void initialize(const datatools::properties & configuration_,
-                              datatools::service_manager & service_manager_,
-                              cuts::cut_handle_dict_type & cut_dict_);
+      virtual void initialize(const datatools::properties& configuration_,
+                              datatools::service_manager& service_manager_,
+                              cuts::cut_handle_dict_type& cut_dict_);
 
       /// Reset
       virtual void reset();
@@ -70,10 +53,8 @@ namespace snemo {
       virtual int _accept();
 
     private:
-
-      uint32_t _mode_;          //!< Mode of the cut
-      double _energy_range_min_; //!< Minimal energy value
-      double _energy_range_max_; //!< Maximal energy value
+      bool energyRequired_;               //!< Require valid energy measurement
+      datatools::real_range energyRange_; //!< Range of energies passing cut
 
       // Macro to automate the registration of the cut :
       CUT_REGISTRATION_INTERFACE(energy_measurement_cut)

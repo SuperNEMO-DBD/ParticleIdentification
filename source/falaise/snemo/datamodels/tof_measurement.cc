@@ -18,12 +18,10 @@ namespace snemo {
 
     tof_measurement::tof_measurement()
     {
-      return;
     }
 
     tof_measurement::~tof_measurement()
     {
-      return;
     }
 
     bool tof_measurement::has_internal_probabilities() const
@@ -36,7 +34,7 @@ namespace snemo {
       return _internal_probabilities_;
     }
 
-    tof_measurement::probability_type & tof_measurement::grab_internal_probabilities()
+    tof_measurement::probability_type & tof_measurement::get_internal_probabilities()
     {
       return _internal_probabilities_;
     }
@@ -51,7 +49,7 @@ namespace snemo {
       return _external_probabilities_;
     }
 
-    tof_measurement::probability_type & tof_measurement::grab_external_probabilities()
+    tof_measurement::probability_type & tof_measurement::get_external_probabilities()
     {
       return _external_probabilities_;
     }
@@ -100,8 +98,6 @@ namespace snemo {
         }
         out_ << "Value #" << i << " = " << pext/CLHEP::perCent << "%" << std::endl;
       }
-
-      return;
     }
 
   } // end of namespace datamodel

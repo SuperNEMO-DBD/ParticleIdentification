@@ -54,7 +54,6 @@ namespace snemo {
     class particle_identification_driver
     {
     public:
-
       /// Mode of the PID driver
       enum mode_type {
         MODE_UNDEFINED = 0,
@@ -62,14 +61,16 @@ namespace snemo {
         MODE_PID_USER  = datatools::bit_mask::bit02
       };
 
-      /// Typedef pair key/value
-      typedef std::pair<std::string, std::string> pair_property_type;
-
-      /// Typedef dictionnary of pair property
-      typedef std::map<std::string, pair_property_type> property_dict_type;
 
       /// Algorithm id
       static const std::string & get_id();
+
+    public:
+      /// Constructor
+      particle_identification_driver();
+
+      /// Destructor
+      virtual ~particle_identification_driver();
 
       /// Initialization flag
       void set_initialized(const bool initialized_);
@@ -93,7 +94,7 @@ namespace snemo {
       const cuts::cut_manager & get_cut_manager() const;
 
       /// Return a mutable reference to the cut manager
-      cuts::cut_manager & grab_cut_manager();
+      cuts::cut_manager & get_cut_manager();
 
       /// Return the PID mode
       uint32_t get_mode() const;
@@ -103,12 +104,6 @@ namespace snemo {
 
       /// Check mode PID_USER
       bool is_mode_pid_user() const;
-
-      /// Constructor
-      particle_identification_driver();
-
-      /// Destructor
-      virtual ~particle_identification_driver();
 
       /// Initialize the gamma tracker through configuration properties
       virtual void initialize(const datatools::properties & setup_);
@@ -133,6 +128,11 @@ namespace snemo {
       datatools::logger::priority _logging_priority_; //!< Logging priority
       uint32_t _mode_;                                //!< Working mode
       cuts::cut_manager * _cut_manager_;              //!< The SuperNEMO cut manager
+
+      /// Typedef pair key/value
+      typedef std::pair<std::string, std::string> pair_property_type;
+      /// Typedef dictionnary of pair property
+      typedef std::map<std::string, pair_property_type> property_dict_type;
       property_dict_type _pid_properties_;            //!< PID properties dictionnary
     };
 

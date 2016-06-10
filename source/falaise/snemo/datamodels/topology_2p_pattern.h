@@ -20,18 +20,18 @@ namespace snemo {
     class topology_2p_pattern : public base_topology_pattern
     {
     public:
-
       /// Static function to return pattern identifier of the pattern
       static const std::string & pattern_id();
 
-      /// Return pattern identifier of the pattern
-      virtual std::string get_pattern_id() const;
-
+    public:
       /// Constructor
       topology_2p_pattern();
 
       /// Destructor
       virtual ~topology_2p_pattern();
+
+      /// Return pattern identifier of the pattern
+      virtual std::string get_pattern_id() const;
 
       /// Check positron minimal energy validity
       bool has_positron_minimal_energy() const;

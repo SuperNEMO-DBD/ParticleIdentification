@@ -36,7 +36,6 @@ namespace snemo {
     void topology_driver::set_initialized(const bool initialized_)
     {
       _initialized_ = initialized_;
-      return;
     }
 
     bool topology_driver::is_initialized() const
@@ -47,7 +46,6 @@ namespace snemo {
     void topology_driver::set_logging_priority(const datatools::logger::priority priority_)
     {
       _logging_priority_ = priority_;
-      return;
     }
 
     datatools::logger::priority topology_driver::get_logging_priority() const
@@ -60,7 +58,6 @@ namespace snemo {
     {
       _set_defaults();
       set_initialized(false);
-      return;
     }
 
     // Destructor
@@ -69,7 +66,6 @@ namespace snemo {
       if (is_initialized()) {
         reset();
       }
-      return;
     }
 
     // Initialize the gamma tracker through configuration properties
@@ -94,10 +90,9 @@ namespace snemo {
         driver_names.push_back(snemo::reconstruction::angle_driver::get_id());
         driver_names.push_back(snemo::reconstruction::energy_driver::get_id());
       }
-      for (std::vector<std::string>::const_iterator
-             idriver = driver_names.begin();
-           idriver != driver_names.end(); ++idriver) {
-        const std::string & a_driver_name = *idriver;
+      
+      for (auto& i_driver : driver_names) {
+        auto a_driver_name = i_driver;
 
         if (a_driver_name == snemo::reconstruction::tof_driver::get_id()) {
           // Initialize TOF Driver
@@ -129,7 +124,6 @@ namespace snemo {
       }
 
       set_initialized(true);
-      return;
     }
 
     // Reset the gamma tracker
@@ -137,7 +131,6 @@ namespace snemo {
     {
       _set_defaults();
       set_initialized(false);
-      return;
     }
 
     int topology_driver::process(const snemo::datamodel::particle_track_data & ptd_,
@@ -163,7 +156,6 @@ namespace snemo {
       _drivers_.VD.reset(0);
       _drivers_.AMD.reset(0);
       _drivers_.EMD.reset(0);
-      return;
     }
 
     int topology_driver::_process_algo(const snemo::datamodel::particle_track_data & ptd_,
@@ -172,7 +164,7 @@ namespace snemo {
       DT_LOG_TRACE(get_logging_priority(), "Entering...");
 
       const std::string a_classification = topology_driver::_get_classification_(ptd_);
-      td_.grab_auxiliaries().store(snemo::datamodel::pid_utils::classification_label_key(),
+      td_.get_auxiliaries().store(snemo::datamodel::pid_utils::classification_label_key(),
                                    a_classification);
       const std::string a_builder_class_id = topology_driver::_get_builder_class_id_(a_classification);
       if (a_builder_class_id.empty()) {
@@ -185,14 +177,14 @@ namespace snemo {
       DT_THROW_IF(! FB.has(a_builder_class_id), std::logic_error,
                   "Topology builder class id '" << a_builder_class_id << "' "
                   << "is not available from the system builder factory register !");
-      const base_topology_builder::factory_register_type::factory_type & the_factory
-        = FB.get(a_builder_class_id);
-      snemo::reconstruction::base_topology_builder * new_builder = the_factory();
-      td_.set_pattern_handle(new_builder->create_pattern());
+      const auto& the_factory = FB.get(a_builder_class_id);
+      auto new_builder = the_factory();
+
 
       // Build new topology pattern
       new_builder->set_measurement_drivers(_drivers_);
-      new_builder->build(ptd_, td_.grab_pattern());
+      auto pattern = new_builder->build(ptd_);
+      td_.set_pattern_handle(pattern);
 
       if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
         DT_LOG_TRACE(get_logging_priority(), "New pattern: ");
@@ -258,15 +250,13 @@ namespace snemo {
     void topology_driver::init_ocd(datatools::object_configuration_description & ocd_)
     {
       // Prefix "TD" stands for "Topology Driver" :
-      datatools::logger::declare_ocd_logging_configuration(ocd_, "fatal", "TD.");
+      //datatools::logger::declare_ocd_logging_configuration(ocd_, "fatal", "TD.");
 
       // Invoke specific OCD support from the driver class:
       ::snemo::reconstruction::tof_driver::init_ocd(ocd_);
       ::snemo::reconstruction::vertex_driver::init_ocd(ocd_);
-      ::snemo::reconstruction::angle_driver::init_ocd(ocd_);
+      //::snemo::reconstruction::angle_driver::init_ocd(ocd_);
       ::snemo::reconstruction::energy_driver::init_ocd(ocd_);
-
-      return;
     }
 
   }  // end of namespace reconstruction
@@ -287,7 +277,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::reconstruction::topology_driver, ocd_)
 
   ocd_.set_validation_support(true);
   ocd_.lock();
-  return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 DOCD_CLASS_SYSTEM_REGISTRATION(snemo::reconstruction::topology_driver,

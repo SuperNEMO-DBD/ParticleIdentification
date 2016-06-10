@@ -15,16 +15,14 @@ namespace snemo {
     void topology_data::set_pattern_handle(const handle_pattern & pattern_handle_)
     {
       _pattern_ = pattern_handle_;
-      return;
     }
 
     void topology_data::detach_pattern()
     {
       _pattern_.reset();
-      return;
     }
 
-    topology_data::handle_pattern & topology_data::grab_pattern_handle()
+    topology_data::handle_pattern & topology_data::get_pattern_handle()
     {
       return _pattern_;
     }
@@ -34,7 +32,7 @@ namespace snemo {
       return _pattern_;
     }
 
-    base_topology_pattern & topology_data::grab_pattern()
+    base_topology_pattern & topology_data::get_pattern()
     {
       return _pattern_.grab();
     }
@@ -44,7 +42,7 @@ namespace snemo {
       return _pattern_.get();
     }
 
-    datatools::properties & topology_data::grab_auxiliaries()
+    datatools::properties & topology_data::get_auxiliaries()
     {
       return _auxiliaries_;
     }
@@ -56,26 +54,22 @@ namespace snemo {
 
     topology_data::topology_data()
     {
-      return;
     }
 
     topology_data::~topology_data()
     {
       this->reset();
-      return;
     }
 
     void topology_data::reset()
     {
       this->clear();
-      return;
     }
 
     void topology_data::clear()
     {
       detach_pattern();
       _auxiliaries_.clear();
-      return;
     }
 
     void topology_data::tree_dump(std::ostream      & out_,
@@ -113,8 +107,6 @@ namespace snemo {
         indent_oss << datatools::i_tree_dumpable::inherit_skip_tag(inherit_) ;
         _auxiliaries_.tree_dump(out_, "", indent_oss.str());
       }
-
-      return;
     }
 
     // serial tag for datatools::serialization::i_serializable interface :

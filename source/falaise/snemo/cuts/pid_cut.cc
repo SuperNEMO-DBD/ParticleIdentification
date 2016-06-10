@@ -24,11 +24,11 @@ namespace snemo {
     // Registration instantiation macro :
     CUT_REGISTRATION_IMPLEMENT(pid_cut, "snemo::cut::pid_cut")
 
+
     pid_cut::particle_range::particle_range()
     {
       min = 0;
       max = 0;
-      return;
     }
 
     void pid_cut::particle_range::parse(const datatools::properties & setup_,
@@ -40,37 +40,27 @@ namespace snemo {
       if (setup_.has_key(prefix_ + "_range.max")) {
         max = setup_.fetch_integer(prefix_ + "_range.max");
       }
-      return;
     }
 
     bool pid_cut::particle_range::check(const size_t n_)
     {
-      if (n_ < min) {
-        return false;
-      }
-      if (n_ > max) {
-        return false;
-      }
-      return true;
+      return ((n_ < min) || (n_ > max)) ? false : true;
     }
 
     void pid_cut::_set_defaults()
     {
       _PTD_label_ = snemo::datamodel::data_info::default_particle_track_data_label();
-      return;
     }
 
     pid_cut::pid_cut(datatools::logger::priority logger_priority_)
       : cuts::i_cut(logger_priority_)
     {
       _set_defaults();
-      return;
     }
 
     pid_cut::~pid_cut()
     {
       if (is_initialized()) this->pid_cut::reset();
-      return;
     }
 
     void pid_cut::reset()
@@ -78,7 +68,6 @@ namespace snemo {
       _set_defaults();
       this->i_cut::_reset();
       this->i_cut::_set_initialized(false);
-      return;
     }
 
     void pid_cut::initialize(const datatools::properties & configuration_,
@@ -101,7 +90,6 @@ namespace snemo {
       _undefined_range_.parse(configuration_, "undefined");
 
       this->i_cut::_set_initialized(true);
-      return;
     }
 
 
@@ -110,16 +98,15 @@ namespace snemo {
       uint32_t cut_returned = cuts::SELECTION_INAPPLICABLE;
 
       // Get event record
-      const datatools::things & ER = get_user_data<datatools::things>();
+      auto& ER = get_user_data<datatools::things>();
 
       if (! ER.has(_PTD_label_)) {
-        DT_LOG_DEBUG(get_logging_priority(), "Event record has no '" << _PTD_label_ << "' bank !");
+        DT_LOG_WARNING(get_logging_priority(), "Event record has no '" << _PTD_label_ << "' bank !");
         return cut_returned;
       }
-      const snemo::datamodel::particle_track_data & PTD
-        = ER.get<snemo::datamodel::particle_track_data>(_PTD_label_);
+      auto PTD = ER.get<snemo::datamodel::particle_track_data>(_PTD_label_);
 
-      const datatools::properties & aux = PTD.get_auxiliaries();
+      auto aux = PTD.get_auxiliaries();
 
       size_t nelectrons = 0;
       size_t npositrons = 0;
@@ -144,11 +131,6 @@ namespace snemo {
         nundefined = aux.fetch_integer(key);
       }
 
-      DT_LOG_TRACE(get_logging_priority(), "nelectron  = " << nelectrons);
-      DT_LOG_TRACE(get_logging_priority(), "npositron  = " << npositrons);
-      DT_LOG_TRACE(get_logging_priority(), "nalphas    = " << nalphas);
-      DT_LOG_TRACE(get_logging_priority(), "ngammas    = " << ngammas);
-      DT_LOG_TRACE(get_logging_priority(), "nundefined = " << nundefined);
 
       bool check = true;
       if (! _electron_range_.check(nelectrons)) check = false;
@@ -159,7 +141,6 @@ namespace snemo {
 
       cut_returned = cuts::SELECTION_ACCEPTED;
       if (! check) {
-        DT_LOG_DEBUG(get_logging_priority(), "Event rejected by pid cut!");
         cut_returned = cuts::SELECTION_REJECTED;
       }
 
